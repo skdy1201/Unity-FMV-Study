@@ -1,0 +1,28 @@
+# 텍스트 파일 자동 감지, 저장소에는 LF로 저장
+* text=auto
+
+# Unity YAML 에셋: Unity가 항상 LF로 저장하므로 작업 폴더도 LF로 고정
+# (autocrlf=true에서 CRLF로 꺼내면 Unity 재저장 시 내용 변화 없이 수정됨으로 표시되는 문제 방지)
+# text=auto를 유지해 바이너리로 직렬화된 에셋은 자동 제외
+*.asset              text=auto eol=lf
+*.prefab             text=auto eol=lf
+*.unity              text=auto eol=lf
+*.meta               text=auto eol=lf
+*.mat                text=auto eol=lf
+*.anim               text=auto eol=lf
+*.controller         text=auto eol=lf
+*.overrideController text=auto eol=lf
+*.physicMaterial     text=auto eol=lf
+*.physicsMaterial2D  text=auto eol=lf
+*.playable           text=auto eol=lf
+*.mask               text=auto eol=lf
+*.preset             text=auto eol=lf
+*.lighting           text=auto eol=lf
+*.shadervariants     text=auto eol=lf
+*.spriteatlas        text=auto eol=lf
+*.terrainlayer       text=auto eol=lf
+*.inputactions       text=auto eol=lf
+*.scenetemplate      text=auto eol=lf
+
+# 영상: 줄바꿈 변환·diff 대상에서 확실히 제외
+*.mp4                binary
