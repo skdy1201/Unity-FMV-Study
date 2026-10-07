@@ -45,5 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
   fadeImage: {fileID: 0}
-  fadeDuration: 10
+  fadeDuration: 1.5
   eventSystem: {fileID: 0}
