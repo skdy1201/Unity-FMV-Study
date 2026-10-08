@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5db27613d80f91945802175437546e5f, type: 3}
+  m_Name: Cladogram
+  m_EditorClassIdentifier: Assembly-CSharp::Cladogram
+  startID: 1
+  edges:
+  - result: 0
+    startID: 1
+    nextID: 2a
+  - result: 3
+    startID: 2a
+    nextID: 2d
+  - result: 4
+    startID: 2a
+    nextID: 2b
+  - result: 5
+    startID: 2a
+    nextID: 2e
+  - result: 0
+    startID: 2e
+    nextID: 3a
+  - result: 0
+    startID: 2d
+    nextID: 3a
+  - result: 1
+    startID: 3a
+    nextID: 3c
+  - result: 2
+    startID: 3a
+    nextID: 3b
+  - result: 0
+    startID: 3c
+    nextID: 4a
+  - result: 0
+    startID: 3b
+    nextID: 4a
+  - result: 3
+    startID: 4a
+    nextID: 5
+  - result: 4
+    startID: 4a
+    nextID: 4b
