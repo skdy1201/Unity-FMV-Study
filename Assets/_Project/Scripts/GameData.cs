@@ -62,5 +62,24 @@ namespace FMV
         }
 
         #endregion
+
+        #region Interact
+
+        /// <summary>
+        /// JSON 클립이름 매칭 테이블에서 ID를 통해 클립이름을 확보
+        /// </summary>
+        /// <param name="id"> 클립 ID </param>
+        /// <returns> 클립 이름 </returns>
+        public string FindClip(string id)
+        {
+            if (!videoMapping.TryGetValue(id, out string clip))
+            {
+                Debug.LogError($"{id}'s Clip search fail");
+            }
+
+            return clip;
+        }
+
+        #endregion
     }
 }
