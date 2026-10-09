@@ -1,15 +1,15 @@
 {
   "videos": [
-    { "id": "01",  "clip": "01_RedcrownWoods_Intro" },
-    { "id": "02a", "clip": "02a_Bargainburg_Choice" },
-    { "id": "02b", "clip": "02b_Bargainburg_FailToStart" },
-    { "id": "02d", "clip": "02d_Bargainburg_Success" },
-    { "id": "02e", "clip": "02e_Bargainburg_Middle" },
-    { "id": "03a", "clip": "03a_BlueRuin_QTEStart" },
-    { "id": "03b", "clip": "03b_BlueRuin_QTEFail_ChapelFall" },
-    { "id": "03c", "clip": "03c_BlueRuin_QTESuccess" },
-    { "id": "04a", "clip": "04a_Tower_Choice" },
-    { "id": "04b", "clip": "04b_Tower_Fail" },
-    { "id": "05",  "clip": "05_Tower_SuccessEnding" }
+    { "id": "1",  "clip": "1_RedcrownWoods_Intro" },
+    { "id": "2",  "clip": "2_Bargainburg_Choice" },
+    { "id": "2a", "clip": "2a_Bargainburg_FailToStart" },
+    { "id": "2b", "clip": "2b_Bargainburg_Success" },
+    { "id": "2c", "clip": "2c_Bargainburg_Middle" },
+    { "id": "3",  "clip": "3_BlueRuin_QTEStart" },
+    { "id": "3a", "clip": "3a_BlueRuin_QTEFail_ChapelFall" },
+    { "id": "3b", "clip": "3b_BlueRuin_QTESuccess" },
+    { "id": "4",  "clip": "4_Tower_Choice" },
+    { "id": "4a", "clip": "4a_Tower_Fail" },
+    { "id": "5",  "clip": "5_Tower_SuccessEnding" }
   ]
 }

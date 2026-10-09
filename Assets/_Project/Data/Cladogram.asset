@@ -16,37 +16,37 @@ MonoBehaviour:
   edges:
   - result: 0
     startID: 1
-    nextID: 2a
+    nextID: 2
   - result: 3
-    startID: 2a
-    nextID: 2d
-  - result: 4
-    startID: 2a
+    startID: 2
     nextID: 2b
+  - result: 4
+    startID: 2
+    nextID: 2a
   - result: 5
-    startID: 2a
-    nextID: 2e
+    startID: 2
+    nextID: 2c
   - result: 0
-    startID: 2e
-    nextID: 3a
+    startID: 2c
+    nextID: 3
   - result: 0
-    startID: 2d
-    nextID: 3a
+    startID: 2b
+    nextID: 3
   - result: 1
-    startID: 3a
-    nextID: 3c
-  - result: 2
-    startID: 3a
+    startID: 3
     nextID: 3b
-  - result: 0
-    startID: 3c
-    nextID: 4a
+  - result: 2
+    startID: 3
+    nextID: 3a
   - result: 0
     startID: 3b
-    nextID: 4a
+    nextID: 4
+  - result: 0
+    startID: 3a
+    nextID: 4
   - result: 3
-    startID: 4a
+    startID: 4
     nextID: 5
   - result: 4
-    startID: 4a
-    nextID: 4b
+    startID: 4
+    nextID: 4a
