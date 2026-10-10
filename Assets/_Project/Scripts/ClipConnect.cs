@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
+using FMV;
 
 /// <summary>
 /// 인스펙터에 등록한 VideoClip을 클립 이름으로 찾아 주는 조회 테이블
@@ -8,7 +9,8 @@ using UnityEngine.Video;
 /// <remarks>
 /// 키는 VideoClip 에셋 이름(clip.name)이다. 이름이 겹치면 목록에서 뒤에 있는 클립이 남는다
 /// </remarks>
-public class ClipConnect : MonoBehaviour
+[System.Serializable]
+public class ClipConnect : ISetting
 {
     #region Serialized Fields
 
@@ -22,14 +24,18 @@ public class ClipConnect : MonoBehaviour
 
     #endregion
 
-    #region Unity Lifecycle
+    #region ISetting
 
-    private void Awake()
+    public void Init()
     {
         foreach (VideoClip clip in clips)
         {
             clipMap[clip.name] = clip;
         }
+    }
+
+    public void End()
+    {
     }
 
     #endregion
