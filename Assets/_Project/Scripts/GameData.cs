@@ -6,7 +6,8 @@ namespace FMV
     /// <summary>
     /// videos.json을 읽어 영상 id와 VideoClip 이름을 매핑한다
     /// </summary>
-    public class GameData : MonoBehaviour
+    [System.Serializable]
+    public class GameData : ISetting
     {
         #region Serialized Fields
 
@@ -20,11 +21,15 @@ namespace FMV
 
         #endregion
 
-        #region Unity Lifecycle
+        #region ISetting
 
-        private void Awake()
+        public void Init()
         {
             JsonMapping();
+        }
+
+        public void End()
+        {
         }
 
         #endregion
@@ -63,6 +68,7 @@ namespace FMV
 
         #endregion
 
+
         #region Interact
 
         /// <summary>
@@ -72,11 +78,11 @@ namespace FMV
         /// <returns> 클립 이름 </returns>
         public string FindClip(string id)
         {
-            if (!videoMapping.TryGetValue(id, out string clip))
+            if(!videoMapping.TryGetValue(id, out string  clip))
             {
-                Debug.LogError($"{id}'s Clip search fail");
+                Debug.LogError($"{id}'s Clip search fail");     
             }
-
+            
             return clip;
         }
 
