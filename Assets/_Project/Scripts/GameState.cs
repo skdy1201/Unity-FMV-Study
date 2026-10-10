@@ -9,7 +9,7 @@ namespace FMV
     /// GameController가 소유하는 일반 클래스라 씬 오브젝트 없이 쓴다.
     /// 단계는 분기 id("2a" 같은 값)로 들고 있어 Graph·GameData와 같은 값을 쓴다
     /// </remarks>
-    public class GameState
+    public class GameState : ISetting
     {
         #region Private Fields
 
@@ -42,7 +42,7 @@ namespace FMV
 
         #endregion
 
-        #region Save
+        #region ISetting
 
         /// <summary>
         /// 저장된 기록을 불러온다
@@ -58,6 +58,18 @@ namespace FMV
         }
 
         /// <summary>
+        /// 게임이 끝날 때 호출해 기록을 저장한다
+        /// </summary>
+        public void End()
+        {
+            Save();
+        }
+
+        #endregion
+
+        #region Save
+
+        /// <summary>
         /// 현재 기록을 PlayerPrefs에 쓴다
         /// </summary>
         public void Save()
@@ -71,14 +83,6 @@ namespace FMV
         #endregion
 
         #region Progress
-
-        /// <summary>
-        /// 게임이 끝날 때 호출해 기록을 저장한다
-        /// </summary>
-        public void End()
-        {
-            Save();
-        }
 
         /// <summary>
         /// 현재 단계를 도달한 분기 id로 바꾸고, 최대 단계보다 앞선 단계면 최대 단계도 갱신한다
