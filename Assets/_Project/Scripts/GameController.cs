@@ -8,6 +8,8 @@ public class GameController : MonoBehaviour
     private GameState gameState = new GameState();
     [SerializeField] private ClipConnect clipConnect = new ClipConnect();
 
+    [SerializeField] private VideoPlayerScript videoPlayer;
+
     private List<ISetting> interfaceList;
 
     #region Properties
