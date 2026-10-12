@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FMV
 {
     /// <summary>
-    /// videos.json과 nodes.json을 읽어 영상 id별 VideoClip 이름과 Action 정보를 매핑한다
+    /// videos.json과 nodes.json을 읽어 영상 id별 VideoClip 이름과 Action 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다
     /// </summary>
     [System.Serializable]
     public class GameData : ISetting
@@ -90,14 +90,12 @@ namespace FMV
             }
         }
 
-
         #endregion
 
-
-        #region Interact
+        #region Lookup
 
         /// <summary>
-        /// JSON 클립이름 매칭 테이블에서 ID를 통해 클립이름을 확보
+        /// JSON 클립이름 매칭 테이블에서 ID를 통해 클립이름을 찾는다
         /// </summary>
         /// <param name="id"> 클립 ID </param>
         /// <returns> 클립 이름 </returns>
@@ -112,7 +110,7 @@ namespace FMV
         }
 
         /// <summary>
-        /// 분기 id로 Action 정보를 찾음
+        /// 분기 id로 Action 정보를 찾는다
         /// </summary>
         /// <remarks>
         /// nodes.json에 없는 분기는 Action이 없는 정상 분기이므로 에러를 남기지 않는다
