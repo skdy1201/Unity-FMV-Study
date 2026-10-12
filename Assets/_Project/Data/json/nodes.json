@@ -1,0 +1,49 @@
+{
+  "nodes": [
+    {
+      "id": "2",
+      "type": "Choice",
+      "timing": {
+        "actionStart": 8.0,
+        "loopStart": 8.0,
+        "loopEnd": 10.0,
+        "timeLimit": 0.0
+      },
+      "timeoutResult": 4,
+      "options": [
+        { "result": 3, "label": "흥정한다" },
+        { "result": 4, "label": "그냥 떠난다" },
+        { "result": 5, "label": "주변을 살핀다" }
+      ]
+    },
+    {
+      "id": "3",
+      "type": "QTE",
+      "timing": {
+        "actionStart": 8.0,
+        "loopStart": 0.0,
+        "loopEnd": 0.0,
+        "timeLimit": 3.0
+      },
+      "timeoutResult": 2,
+      "options": [
+        { "result": 1, "label": "회피", "anchor": { "x": 0.7, "y": 0.4 } }
+      ]
+    },
+    {
+      "id": "4",
+      "type": "Choice",
+      "timing": {
+        "actionStart": 8.0,
+        "loopStart": 8.0,
+        "loopEnd": 10.0,
+        "timeLimit": 0.0
+      },
+      "timeoutResult": 4,
+      "options": [
+        { "result": 3, "label": "탑에 오른다" },
+        { "result": 4, "label": "물러선다" }
+      ]
+    }
+  ]
+}
