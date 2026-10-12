@@ -3,7 +3,8 @@ using UnityEngine;
 namespace FMV
 {
     /// <summary>
-    /// 현재 단계, 최대 단계, 실패 횟수를 들고 있고 PlayerPrefs로 저장·불러오기를 한다
+    /// 현재 단계, 최대 단계, 실패 횟수를 들고 있고 PlayerPrefs로 저장·불러오기를 한다.
+    /// 분기 안의 진행 단계는 저장하지 않는 GamePhase로 따로 갖고 있다
     /// </summary>
     /// <remarks>
     /// GameController가 소유하는 일반 클래스라 씬 오브젝트 없이 쓴다.
@@ -20,6 +21,8 @@ namespace FMV
         private string maxGrade = string.Empty;
         private string newestGrade = string.Empty;
         private int failCount = 0;
+
+        private GamePhase gamePhase = new GamePhase();
 
         #endregion
 
@@ -39,6 +42,11 @@ namespace FMV
         /// 누적 실패 횟수
         /// </summary>
         public int FailCount => failCount;
+
+        /// <summary>
+        /// 분기 안의 진행 단계. 저장하지 않는다
+        /// </summary>
+        public GamePhase GamePhase => gamePhase;
 
         #endregion
 
