@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FMV
 {
     /// <summary>
-    /// videos.json을 읽어 영상 id와 VideoClip 이름을 매핑한다
+    /// videos.json과 nodes.json을 읽어 영상 id별 VideoClip 이름과 Action 정보를 매핑한다
     /// </summary>
     [System.Serializable]
     public class GameData : ISetting
@@ -12,12 +12,14 @@ namespace FMV
         #region Serialized Fields
 
         [SerializeField] private TextAsset videoJson;
+        [SerializeField] private TextAsset nodeJson;
 
         #endregion
 
         #region Private Fields
 
         private Dictionary<string, string> videoMapping = new Dictionary<string, string>();
+        private Dictionary<string, JsonNodeInfo> nodeMapping = new Dictionary<string, JsonNodeInfo>();
 
         #endregion
 
@@ -42,6 +44,7 @@ namespace FMV
         private void JsonMapping()
         {
             ClipIdMapping();
+            NodeInfoMapping();
         }
 
         /// <summary>
@@ -66,6 +69,24 @@ namespace FMV
             }
         }
 
+        /// <summary>
+        /// 분기 id를 키로, Action 정보를 값으로 등록한다
+        /// </summary>
+        /// <remarks>
+        /// nodes.json에는 Action이 있는 분기만 적으므로, 등록되지 않은 분기는 Action이 없는 분기다.
+        /// 같은 id가 여러 번 있으면 뒤에 나온 값으로 덮어쓴다
+        /// </remarks>
+        private void NodeInfoMapping()
+        {
+            JsonNodeTable table = JsonUtility.FromJson<JsonNodeTable>(nodeJson.text);
+
+            foreach (JsonNodeInfo node in table.Nodes)
+            {
+                nodeMapping[node.ID] = node;
+            }
+        }
+
+
         #endregion
 
 
@@ -84,6 +105,20 @@ namespace FMV
             }
             
             return clip;
+        }
+
+        /// <summary>
+        /// 분기 id로 Action 정보를 찾음
+        /// </summary>
+        /// <remarks>
+        /// nodes.json에 없는 분기는 Action이 없는 정상 분기이므로 에러를 남기지 않는다
+        /// </remarks>
+        /// <param name="id"> 분기 id </param>
+        /// <param name="info"> 찾은 Action 정보. 없으면 null </param>
+        /// <returns> Action이 있는 분기면 true </returns>
+        public bool TryGetNodeInfo(string id, out JsonNodeInfo info)
+        {
+            return nodeMapping.TryGetValue(id, out info);
         }
 
         #endregion
