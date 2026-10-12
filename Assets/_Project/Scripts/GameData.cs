@@ -13,6 +13,7 @@ namespace FMV
 
         [SerializeField] private TextAsset videoJson;
         [SerializeField] private TextAsset nodeJson;
+        [SerializeField] private Cladogram cladogram;
 
         #endregion
 
@@ -20,6 +21,7 @@ namespace FMV
 
         private Dictionary<string, string> videoMapping = new Dictionary<string, string>();
         private Dictionary<string, JsonNodeInfo> nodeMapping = new Dictionary<string, JsonNodeInfo>();
+        private Graph cladoGraph;
 
         #endregion
 
@@ -28,6 +30,8 @@ namespace FMV
         public void Init()
         {
             JsonMapping();
+
+            cladoGraph = new Graph(cladogram);
         }
 
         public void End()
