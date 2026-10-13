@@ -42,11 +42,6 @@ namespace FMV
             }
         }
 
-        private void Update()
-        {
-            
-        }
-
         private void OnDisable()
         {
             foreach (ISetting set in interfaceList)

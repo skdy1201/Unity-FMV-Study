@@ -36,6 +36,9 @@ namespace FMV
 
         #region ISetting
 
+        /// <summary>
+        /// JSON 매핑 테이블과 분기 Graph를 만든다
+        /// </summary>
         public void Init()
         {
             JsonMapping();
@@ -43,6 +46,9 @@ namespace FMV
             cladoGraph = new Graph(cladogram);
         }
 
+        /// <summary>
+        /// 정리할 것이 없어 비워 둔다
+        /// </summary>
         public void End()
         {
         }
@@ -104,17 +110,17 @@ namespace FMV
         #region Lookup
 
         /// <summary>
-        /// JSON 클립이름 매칭 테이블에서 ID를 통해 클립이름을 찾는다
+        /// 영상 id로 VideoClip 이름을 찾는다
         /// </summary>
-        /// <param name="id"> 클립 ID </param>
-        /// <returns> 클립 이름 </returns>
+        /// <param name="id"> 영상 id </param>
+        /// <returns> VideoClip 이름. 없으면 null </returns>
         public string FindClip(string id)
         {
-            if(!videoMapping.TryGetValue(id, out string  clip))
+            if (!videoMapping.TryGetValue(id, out string clip))
             {
-                Debug.LogError($"{id}'s Clip search fail");     
+                Debug.LogError($"{id}'s Clip search fail");
             }
-            
+
             return clip;
         }
 
