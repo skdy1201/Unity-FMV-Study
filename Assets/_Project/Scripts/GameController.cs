@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
@@ -71,6 +72,42 @@ namespace FMV
             {
                 set.End();
             }
+        }
+
+        #endregion
+
+        #region Phase
+
+        private void GameEntry()
+        {
+            Graph graph = gameData.Graph;
+
+            // 세이브가 없는 첫 실행이면 NewestGrade가 빈 문자열이므로 시작 분기부터 진행한다
+            string currentId = string.IsNullOrEmpty(gameState.NewestGrade) ? graph.Start.ID : gameState.NewestGrade;
+
+            Node current = graph.FindNode(currentId);
+            if (current == null)
+            {
+                Debug.LogError($"Node not found: {currentId}");
+                return;
+            }
+
+            List<(string id, VideoClip clip)> clips = new List<(string id, VideoClip clip)>
+            {
+                (currentId, GetClipById(currentId))
+            };
+
+            foreach (NodeResult result in Enum.GetValues(typeof(NodeResult)))
+            {
+                string nextId = current.GetNext(result);
+                if (nextId != null)
+                {
+                    clips.Add((nextId, GetClipById(nextId)));
+                }
+            }
+
+            videoPlayer.PrepareNextClips(clips);
+            videoPlayer.PlayClip(currentId);
         }
 
         #endregion

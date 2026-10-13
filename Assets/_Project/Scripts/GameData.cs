@@ -25,6 +25,15 @@ namespace FMV
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Cladogram으로 만든 분기도. Init 이후에 사용할 수 있다
+        /// </summary>
+        public Graph Graph => cladoGraph;
+
+        #endregion
+
         #region ISetting
 
         public void Init()
