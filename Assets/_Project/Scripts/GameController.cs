@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 
 namespace FMV
 {
@@ -70,6 +71,29 @@ namespace FMV
             {
                 set.End();
             }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        /// <summary>
+        /// 분기 id로 VideoClip을 찾는다
+        /// </summary>
+        /// <remarks>
+        /// 분기 id("2a")와 VideoClip 이름("2a_Bargainburg_FailToStart")은 다른 값이다.
+        /// GameData가 id → 클립 이름, ClipConnect가 클립 이름 → VideoClip을 따로 맡아 서로를 모르므로,
+        /// 두 파츠를 함께 들고 있는 컨트롤러가 이어 준다.
+        /// 클립이 필요하면 ClipConnect.GetClip에 id를 넣지 말고 이 메서드를 쓴다
+        /// </remarks>
+        /// <param name="id"> 분기 id </param>
+        /// <returns> 찾은 클립. id나 클립 이름이 없으면 null </returns>
+        private VideoClip GetClipById(string id)
+        {
+            string clipName = gameData.FindClip(id);
+
+            // Dictionary는 null 키를 받으면 예외를 던지므로, 이름을 못 찾았으면 ClipConnect에 넘기지 않는다
+            return clipName != null ? clipConnect.GetClip(clipName) : null;
         }
 
         #endregion
