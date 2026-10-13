@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
@@ -21,6 +22,7 @@ public class VideoPlayerScript : MonoBehaviour
     private const int MaxVideoCount = 4;
 
     private readonly List<VideoPlayer> videoPlayers = new List<VideoPlayer>();
+    private readonly string[] slotIds = new string[MaxVideoCount];
     private int playIndex = 0;
     private float playSpeed = 1f;
     private bool isLooping = false;
@@ -60,21 +62,57 @@ public class VideoPlayerScript : MonoBehaviour
     #region Clip Setup
 
     /// <summary>
-    /// 플레이어 슬롯에 클립을 넣고 미리 준비
+    /// 분기 id별 클립을 빈 슬롯에 넣고 미리 준비
     /// </summary>
     /// <remarks>
-    /// 지금 재생 중인 슬롯에 넣으면 재생 중인 영상이 바뀐다
+    /// 이미 준비된 id는 슬롯을 그대로 두어 다시 Prepare하지 않는다.
+    /// 목록에 없는 id의 슬롯은 비워서 재사용하므로, 지금 재생할 클립도 목록에 넣어야 한다.
+    /// 같은 id가 여러 번 들어오면 처음 것만 쓴다
     /// </remarks>
-    /// <param name="idx"> 플레이어 슬롯 번호 </param>
-    /// <param name="clip"> 준비할 클립 </param>
-    public void SetConnectedClip(int idx, VideoClip clip)
+    /// <param name="clips"> 준비할 (분기 id, 클립) 목록 </param>
+    public void PrepareNextClips(IReadOnlyList<(string id, VideoClip clip)> clips)
     {
-        if (idx < 0 || idx >= videoPlayers.Count)
+        HashSet<string> keepIds = new HashSet<string>();
+        foreach ((string id, VideoClip) item in clips)
         {
-            Debug.LogError($"Invalid player index: {idx}");
-            return;
+            keepIds.Add(item.id);
         }
 
+        for (int i = 0; i < slotIds.Length; ++i)
+        {
+            if (slotIds[i] != null && !keepIds.Contains(slotIds[i]))
+            {
+                slotIds[i] = null;
+            }
+        }
+
+        foreach ((string id, VideoClip clip) in clips)
+        {
+            if (string.IsNullOrEmpty(id) || clip == null)
+            {
+                Debug.LogError($"Invalid clip: id = {id}, clip = {clip}");
+                continue;
+            }
+
+            if (Array.IndexOf(slotIds, id) >= 0)
+            {
+                continue;
+            }
+
+            int emptySlot = Array.IndexOf(slotIds, null);
+            if (emptySlot < 0)
+            {
+                Debug.LogError($"No empty player slot for {id} (max {MaxVideoCount})");
+                continue;
+            }
+
+            SetConnectedClip(emptySlot, id, clip);
+        }
+    }
+
+    private void SetConnectedClip(int idx, string id, VideoClip clip)
+    {
+        slotIds[idx] = id;
         videoPlayers[idx].clip = clip;
         videoPlayers[idx].Prepare();
     }
@@ -84,17 +122,19 @@ public class VideoPlayerScript : MonoBehaviour
     #region Playback
 
     /// <summary>
-    /// 이전 플레이어를 멈추고 해당 슬롯의 클립을 재생
+    /// 이전 플레이어를 멈추고 해당 분기의 클립을 재생
     /// </summary>
     /// <remarks>
+    /// PrepareNextClips로 준비된 id만 재생할 수 있다.
     /// 구간 반복은 해제되므로 필요하면 재생 후 SetLoopTime을 다시 호출한다
     /// </remarks>
-    /// <param name="idx"> 재생할 플레이어 슬롯 번호 </param>
-    public void PlayClip(int idx)
+    /// <param name="id"> 재생할 분기 id </param>
+    public void PlayClip(string id)
     {
-        if (idx < 0 || idx >= videoPlayers.Count)
+        int idx = Array.IndexOf(slotIds, id);
+        if (idx < 0)
         {
-            Debug.LogError($"Invalid player index: {idx}");
+            Debug.LogError($"Clip not prepared: {id}");
             return;
         }
 
