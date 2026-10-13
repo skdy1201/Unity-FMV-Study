@@ -42,6 +42,11 @@ namespace FMV
             }
         }
 
+        private void Start()
+        {
+            GameEntry();           
+        }
+
         private void OnDisable()
         {
             foreach (ISetting set in interfaceList)
