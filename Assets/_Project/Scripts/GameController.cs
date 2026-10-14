@@ -40,6 +40,8 @@ namespace FMV
             {
                 set.Init();
             }
+
+            videoPlayer.ClipEnd += ClipEnd;
         }
 
         private void Start()
@@ -87,8 +89,25 @@ namespace FMV
                 }
             }
 
+            gameState.UpdateGrade(currentId);
+
             videoPlayer.PrepareNextClips(clips);
             videoPlayer.PlayClip(currentId);
+        }
+
+        private void ClipEnd(NodeResult result)
+        {
+            string currentId = gameState.NewestGrade;
+            string nextId = gameData.Graph.GetNext(currentId, result).ID;
+
+            if (nextId == null)
+            {
+                // TODO : 타이틀 씬으로 변경
+            }
+
+            gameState.UpdateGrade(nextId);
+
+            GameEntry();
         }
 
         #endregion
