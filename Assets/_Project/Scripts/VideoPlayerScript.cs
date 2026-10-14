@@ -32,6 +32,15 @@ namespace FMV
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// 재생 중인 클립이 끝까지 재생되면 결과를 넘겨 호출된다
+        /// </summary>
+        public event Action<NodeResult> ClipEnd;
+
+        #endregion
+
         #region Unity Lifecycle
 
         private void Awake()
@@ -48,6 +57,8 @@ namespace FMV
                 player.renderMode = VideoRenderMode.RenderTexture;
                 player.targetTexture = renderTexture;
                 videoPlayers.Add(player);
+
+                player.loopPointReached += OnLoopPointReached;
             }
         }
 
@@ -160,6 +171,15 @@ namespace FMV
         {
             playSpeed = speed;
             videoPlayers[playIndex].playbackSpeed = playSpeed;
+        }
+
+        /// <summary>
+        /// 클립이 끝까지 재생되면 ClipEnd로 다시 알림
+        /// </summary>
+        /// <param name="source"> 재생이 끝난 플레이어 </param>
+        private void OnLoopPointReached(VideoPlayer source)
+        {
+            ClipEnd?.Invoke(NodeResult.Finished);
         }
 
         #endregion
