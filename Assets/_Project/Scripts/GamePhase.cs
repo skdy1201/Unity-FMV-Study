@@ -6,9 +6,10 @@ namespace FMV
     public enum PhaseState
     {
         Entry = 0,
-        Action = 1,
-        Out = 2,
-        End = 3,
+        Play = 1,
+        Action = 2,
+        Out = 3,
+        End = 4,
     }
 
     /// <summary>
