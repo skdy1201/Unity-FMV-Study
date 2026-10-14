@@ -164,6 +164,28 @@ namespace FMV
         }
 
         /// <summary>
+        /// 현재 플레이어가 재생 중이면 일시정지, 멈춰 있으면 이어서 재생
+        /// </summary>
+        public void RenewPlay()
+        {
+            VideoPlayer player = videoPlayers[playIndex];
+            if (player == null)
+            {
+                Debug.LogError($"Video player is null: index = {playIndex}");
+                return;
+            }
+
+            if (player.isPlaying)
+            {
+                player.Pause();
+            }
+            else
+            {
+                player.Play();
+            }
+        }
+
+        /// <summary>
         /// 재생 속도 변경. 이후 재생하는 클립에도 유지된다
         /// </summary>
         /// <param name="speed"> 재생 배속 </param>
