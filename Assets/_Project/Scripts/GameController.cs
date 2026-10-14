@@ -19,12 +19,16 @@ namespace FMV
         [SerializeField] private ClipConnect clipConnect = new ClipConnect();
 
         [SerializeField] private VideoPlayerScript videoPlayer;
+        [SerializeField] private GameObject mediaInteractUI;
 
         #endregion
 
         #region Private Fields
 
         private GameState gameState = new GameState();
+        private GameInput gameInput = new GameInput();
+
+        private ButtonVisual mediaVisual;
 
         private List<ISetting> interfaceList;
 
@@ -42,11 +46,18 @@ namespace FMV
             }
 
             videoPlayer.ClipEnd += ClipEnd;
+
+            ConnectMediaButton();
         }
 
         private void Start()
         {
-            GameEntry();           
+            GameEntry();
+        }
+
+        private void Update()
+        {
+            HandleInput();
         }
 
         private void OnDisable()
@@ -93,6 +104,8 @@ namespace FMV
 
             videoPlayer.PrepareNextClips(clips);
             videoPlayer.PlayClip(currentId);
+
+            gameState.GamePhase.SetPhase(PhaseState.Play);
         }
 
         private void ClipEnd(NodeResult result)
@@ -108,6 +121,52 @@ namespace FMV
             gameState.UpdateGrade(nextId);
 
             GameEntry();
+        }
+
+        #endregion
+
+        #region UI
+
+        /// <summary>
+        /// MediaInteractUI 프리팹을 생성하고, 버튼 클릭을 영상 재생/일시정지에 연결한다
+        /// </summary>
+        /// <remarks>
+        /// 프리팹은 씬의 VideoPlayerScript를 Inspector에서 참조할 수 없으므로, 생성한 뒤 코드로 연결한다
+        /// </remarks>
+        private void ConnectMediaButton()
+        {
+            GameObject ui = Instantiate(mediaInteractUI);
+            ButtonSetting playButton = ui.GetComponentInChildren<ButtonSetting>();
+
+            if (playButton.ButtonType != ButtonType.MediaPlay)
+            {
+                Debug.LogError($"Not Match {ButtonType.MediaPlay} Button Type");
+                return;
+            }
+
+            playButton.Bind(videoPlayer.RenewPlay);
+            mediaVisual = ui.GetComponentInChildren<ButtonVisual>();
+        }
+
+        #endregion
+
+        #region Input
+
+        /// <remarks>
+        /// 영상만 재생하는 Play 단계에서만 화면 클릭으로 미디어 버튼을 보이거나 숨긴다.
+        /// Action의 QTE·선택지 구간은 일시정지를 막으므로 토글하지 않는다
+        /// </remarks>
+        private void HandleInput()
+        {
+            if (mediaVisual == null || gameState.GamePhase.Current != PhaseState.Play)
+            {
+                return;
+            }
+
+            if (gameInput.IsScreenClicked())
+            {
+                mediaVisual.ToggleVisible();
+            }
         }
 
         #endregion
