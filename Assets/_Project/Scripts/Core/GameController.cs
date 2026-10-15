@@ -174,11 +174,13 @@ namespace FMV
         private void ClipEnd(NodeResult result)
         {
             string currentId = gameState.NewestGrade;
-            string nextId = gameData.Graph.GetNext(currentId, result).ID;
+            string nextId = gameData.Graph.GetNext(currentId, result)?.ID;
 
             if (nextId == null)
             {
-                // TODO: 타이틀 씬으로 변경
+                SceneChange.ChangeScene("TitleScene");
+
+                return;
             }
 
             gameState.UpdateGrade(nextId);
