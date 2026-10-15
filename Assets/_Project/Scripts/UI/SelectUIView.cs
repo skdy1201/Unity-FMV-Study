@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -16,12 +17,22 @@ namespace FMV
         #region Serialized Fields
 
         [SerializeField] private List<GameObject> optionButtons = new List<GameObject>();
+        [SerializeField] private List<ButtonSetting> buttonSettings = new List<ButtonSetting>();
 
         #endregion
 
         #region Private Fields
 
         private readonly List<TMP_Text> optionLabels = new List<TMP_Text>();
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// 선택지 버튼을 누르면 그 선택지의 결과를 넘겨 호출된다
+        /// </summary>
+        public event Action<NodeResult> OptionSelected;
 
         #endregion
 
@@ -41,8 +52,11 @@ namespace FMV
         #region Options
 
         /// <summary>
-        /// 선택지 수만큼 버튼을 켜고 문구를 바꾸며, 남는 버튼은 끈다
+        /// 선택지 수만큼 버튼을 켜고 문구와 클릭 결과를 바꾸며, 남는 버튼은 끈다
         /// </summary>
+        /// <remarks>
+        /// 노드마다 같은 자리의 버튼이라도 결과가 다르므로, 표시할 때마다 그 노드의 결과로 다시 연결한다
+        /// </remarks>
         /// <param name="options"> 표시할 노드 선택지 </param>
         public void SetOptions(JsonNodeOption[] options)
         {
@@ -59,6 +73,10 @@ namespace FMV
                 if (hasOption)
                 {
                     optionLabels[i].text = options[i].Label;
+
+                    // for 변수 i는 반복마다 새로 생기지 않으므로, 람다가 클릭 시점의 i를 읽지 않도록 결과를 지역 변수로 복사한다
+                    NodeResult result = options[i].Result;
+                    buttonSettings[i].SelectBind(() => OptionSelected?.Invoke(result));
                 }
             }
         }

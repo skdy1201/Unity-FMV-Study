@@ -157,6 +157,20 @@ namespace FMV
             }
         }
 
+        /// <summary>
+        /// 선택지를 고르면 Out 단계로 바꾸고, 고른 결과의 다음 분기로 넘어간다
+        /// </summary>
+        /// <remarks>
+        /// 클립 끝까지 기다리지 않고 바로 넘어가며, 다음 분기 진입은 클립이 끝났을 때와 같은 ClipEnd 흐름을 탄다.
+        /// 반복 구간은 다음 클립의 PlayClip이 해제한다
+        /// </remarks>
+        /// <param name="result"> 고른 선택지의 결과 </param>
+        private void ExitAction(NodeResult result)
+        {
+            gameState.GamePhase.SetPhase(PhaseState.Out, result);
+            ClipEnd(result);
+        }
+
         private void ClipEnd(NodeResult result)
         {
             string currentId = gameState.NewestGrade;
@@ -207,6 +221,7 @@ namespace FMV
         {
             GameObject ui = Instantiate(actionUIPrefab);
             actionUIController.SetSelectUI(ui);
+            actionUIController.OptionSelected += ExitAction;
         }
 
         #endregion

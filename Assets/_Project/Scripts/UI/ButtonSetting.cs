@@ -12,6 +12,7 @@ namespace FMV
         ChangeScene = 0,
         Exit = 1,
         MediaPlay = 2,
+        Select = 3,
     }
 
     /// <summary>
@@ -108,6 +109,24 @@ namespace FMV
                 unityButton.onClick.AddListener(onClickAction);
                 isListenerAdded = true;
             }
+        }
+
+        /// <summary>
+        /// 선택지 버튼일 때만 클릭 기능을 연결한다
+        /// </summary>
+        /// <remarks>
+        /// 타입 검사를 Bind 밖에 두어, 선택지 버튼에만 필요한 처리를 Bind를 건드리지 않고 여기에 더할 수 있게 한다
+        /// </remarks>
+        /// <param name="action"> 클릭 시 호출할 기능 </param>
+        public void SelectBind(UnityAction action)
+        {
+            if (buttonType != ButtonType.Select)
+            {
+                Debug.LogError($"Not Match {ButtonType.Select} Button Type: {name}");
+                return;
+            }
+
+            Bind(action);
         }
 
         private UnityAction CreateClickAction()

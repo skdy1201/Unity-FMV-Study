@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace FMV
@@ -26,10 +27,19 @@ namespace FMV
 
         #endregion
 
+        #region Events
+
+        /// <summary>
+        /// 선택지를 고르면, 선택지 UI를 숨긴 뒤 그 선택지의 결과를 넘겨 호출된다
+        /// </summary>
+        public event Action<NodeResult> OptionSelected;
+
+        #endregion
+
         #region Select
 
         /// <summary>
-        /// 생성한 선택지 UI를 등록한다
+        /// 생성한 선택지 UI를 등록하고, 버튼 선택을 받도록 구독한다
         /// </summary>
         /// <param name="selectInstance"> 생성한 SelectUI 인스턴스. CanvasGroup과 SelectUIView가 있어야 한다 </param>
         public void SetSelectUI(GameObject selectInstance)
@@ -37,6 +47,7 @@ namespace FMV
             selectUIInstance = selectInstance;
             selectUIGroup = selectUIInstance.GetComponent<CanvasGroup>();
             selectUIView = selectUIInstance.GetComponent<SelectUIView>();
+            selectUIView.OptionSelected += SelectOption;
         }
 
         /// <summary>
@@ -60,6 +71,15 @@ namespace FMV
             selectUIGroup.alpha = 0f;
             selectUIGroup.interactable = false;
             selectUIGroup.blocksRaycasts = false;
+        }
+
+        /// <remarks>
+        /// 숨기기를 먼저 해서 interactable을 꺼, 같은 선택지 UI에서 두 번 눌려 결과가 두 번 넘어가지 않게 한다
+        /// </remarks>
+        private void SelectOption(NodeResult result)
+        {
+            ClearSelectUI();
+            OptionSelected?.Invoke(result);
         }
 
         #endregion
