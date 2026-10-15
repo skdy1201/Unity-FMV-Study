@@ -22,6 +22,7 @@ namespace FMV
         #region Private Fields
 
         private GameObject selectUIInstance;
+        private SelectUIView selectUIView;
 
         #endregion
 
@@ -30,18 +31,22 @@ namespace FMV
         /// <summary>
         /// 생성한 선택지 UI를 등록한다
         /// </summary>
-        /// <param name="selectInstance"> 생성한 SelectUI 인스턴스. CanvasGroup이 있어야 한다 </param>
+        /// <param name="selectInstance"> 생성한 SelectUI 인스턴스. CanvasGroup과 SelectUIView가 있어야 한다 </param>
         public void SetSelectUI(GameObject selectInstance)
         {
             selectUIInstance = selectInstance;
             selectUIGroup = selectUIInstance.GetComponent<CanvasGroup>();
+            selectUIView = selectUIInstance.GetComponent<SelectUIView>();
         }
 
         /// <summary>
-        /// 선택지 UI를 보이고 입력을 받게 한다
+        /// 노드 선택지로 버튼을 세팅한 뒤, 선택지 UI를 보이고 입력을 받게 한다
         /// </summary>
-        public void ActiveSelectUI()
+        /// <param name="options"> 표시할 노드 선택지 </param>
+        public void ActiveSelectUI(JsonNodeOption[] options)
         {
+            selectUIView.SetOptions(options);
+
             selectUIGroup.alpha = 1f;
             selectUIGroup.interactable = true;
             selectUIGroup.blocksRaycasts = true;

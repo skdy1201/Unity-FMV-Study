@@ -146,7 +146,7 @@ namespace FMV
             switch (info.Type)
             {
                 case "Choice":
-                    actionUIController.ActiveSelectUI();
+                    actionUIController.ActiveSelectUI(info.Options);
                     break;
                 case "QTE":
                     // TODO: QTE UI 표시. QTE는 반복 구간이 없어 SetLoopTime을 타지 않으므로 슬로 배속을 따로 걸어야 한다
