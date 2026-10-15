@@ -20,7 +20,7 @@ namespace FMV
 
         private string maxGrade = string.Empty;
         private string newestGrade = string.Empty;
-        private string prevGrade = string.Empty;
+        private string checkpointGrade = string.Empty;
         private int failCount = 0;
 
         private GamePhase gamePhase = new GamePhase();
@@ -40,12 +40,17 @@ namespace FMV
         public string NewestGrade => newestGrade;
 
         /// <summary>
-        /// 마지막으로 도달한 분기 바로 전의 분기 id. 기록이 없으면 빈 문자열
+        /// 최근에 들어간 Action(선택지·QTE) 분기 id. 기록이 없으면 빈 문자열
         /// </summary>
         /// <remarks>
-        /// 실패로 끝났을 때 되돌아갈 지점으로 쓴다. 저장하지 않으므로 게임을 다시 켜면 빈 문자열로 시작한다
+        /// 배드 엔딩은 선택에서 갈라지므로, 실패로 끝났을 때 이 분기로 되돌아간다.
+        /// 저장하지 않으므로 게임을 다시 켜면 빈 문자열로 시작한다
         /// </remarks>
-        public string PrevGrade => prevGrade;
+        public string CheckpointGrade
+        {
+            get => checkpointGrade;
+            set => checkpointGrade = value;
+        }
 
         /// <summary>
         /// 누적 실패 횟수
@@ -111,12 +116,6 @@ namespace FMV
         /// <param name="id"> 도달한 분기 id </param>
         public void UpdateGrade(string id)
         {
-            // ClipEnd에서 갱신한 뒤 GameEntry가 같은 id로 다시 부르므로, 같은 id면 이전 단계를 덮어쓰지 않는다
-            if (id != newestGrade)
-            {
-                prevGrade = newestGrade;
-            }
-
             newestGrade = id;
 
             if (ParseStage(id) > ParseStage(maxGrade))

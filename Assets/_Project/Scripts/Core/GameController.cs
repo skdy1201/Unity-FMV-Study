@@ -115,6 +115,7 @@ namespace FMV
             // nodes.json에 없는 분기는 Action 없이 클립 끝까지 재생하므로 기다리지 않는다
             if (gameData.TryGetNodeInfo(currentId, out JsonNodeInfo info))
             {
+                gameState.CheckpointGrade = currentId;
                 videoPlayer.WaitActionTime(info.Timing.ActionStart);
             }
         }
@@ -178,6 +179,8 @@ namespace FMV
 
             if (nextId == null)
             {
+                gameState.UpdateGrade(gameState.CheckpointGrade);
+
                 SceneChange.ChangeScene("TitleScene");
 
                 return;
