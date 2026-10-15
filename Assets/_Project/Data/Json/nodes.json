@@ -11,9 +11,9 @@
       },
       "timeoutResult": 4,
       "options": [
-        { "result": 3, "label": "흥정한다" },
-        { "result": 4, "label": "그냥 떠난다" },
-        { "result": 5, "label": "주변을 살핀다" }
+        { "result": 3, "label": "힘껏 뛴다" },
+        { "result": 4, "label": "적당히 뛴다" },
+        { "result": 5, "label": "살짝 뛴다" }
       ]
     },
     {
