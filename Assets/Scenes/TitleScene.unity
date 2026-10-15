@@ -235,6 +235,26 @@ PrefabInstance:
       propertyPath: m_text
       value: Exit
       objectReference: {fileID: 0}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_fontSize
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 3338017ea9a14bd4f835fdb7999194c1, type: 2}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -7874093049126245568, guid: 3338017ea9a14bd4f835fdb7999194c1, type: 2}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -973,6 +993,26 @@ PrefabInstance:
     - target: {fileID: 5802880958906780367, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
       propertyPath: m_Name
       value: EnterButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_fontSize
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 3338017ea9a14bd4f835fdb7999194c1, type: 2}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -7874093049126245568, guid: 3338017ea9a14bd4f835fdb7999194c1, type: 2}
+    - target: {fileID: 6944858804795700290, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
