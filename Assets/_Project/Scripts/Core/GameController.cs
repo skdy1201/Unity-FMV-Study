@@ -20,6 +20,8 @@ namespace FMV
 
         [SerializeField] private VideoPlayerScript videoPlayer;
         [SerializeField] private GameObject mediaInteractUI;
+        [SerializeField] private GameObject actionUIPrefab;
+        [SerializeField] private ActionUIController actionUIController;
 
         #endregion
 
@@ -29,7 +31,6 @@ namespace FMV
         private GameInput gameInput = new GameInput();
 
         private ButtonVisual mediaVisual;
-
         private List<ISetting> interfaceList;
 
         #endregion
@@ -48,6 +49,7 @@ namespace FMV
             videoPlayer.ClipEnd += ClipEnd;
 
             ConnectMediaButton();
+            // TODO: actionUIPrefab을 생성해 actionUIController.SetSelectUI로 등록한다
         }
 
         private void Start()
@@ -106,6 +108,9 @@ namespace FMV
             videoPlayer.PlayClip(currentId);
 
             gameState.GamePhase.SetPhase(PhaseState.Play);
+
+            // TODO: Action이 있는 분기(TryGetNodeInfo)면 클립이 ActionStart에 도달했을 때
+            //       Action 단계로 바꾸고 선택지 UI를 띄운다. VideoPlayerScript에 현재 재생 시간 조회가 필요하다
         }
 
         private void ClipEnd(NodeResult result)
