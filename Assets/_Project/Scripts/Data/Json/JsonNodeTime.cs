@@ -14,12 +14,12 @@ namespace FMV
         #region Serialized Fields
 
         // TODO: QTE(id 3)의 actionStart·timeLimit은 임의 값이다. 영상을 보면서 실제 구간으로 맞춘다
-        // TODO: QTE는 슬로모션으로 처리한다. 배속을 담을 speed 필드를 추가하고,
-        //       (클립 길이 - actionStart) / speed가 timeLimit보다 길도록 값을 맞춘다
+        // TODO: QTE는 슬로모션으로 처리한다. (클립 길이 - actionStart) / speed가 timeLimit보다 길도록 값을 맞춘다
         [SerializeField] private float actionStart;
         [SerializeField] private float loopStart;
         [SerializeField] private float loopEnd;
         [SerializeField] private float timeLimit;
+        [SerializeField] private float speed;
 
         #endregion
 
@@ -50,6 +50,14 @@ namespace FMV
         /// 0이면 제한 없이 기다린다
         /// </remarks>
         public float TimeLimit => timeLimit;
+
+        /// <summary>
+        /// Action 구간의 재생 배속
+        /// </summary>
+        /// <remarks>
+        /// JsonUtility는 JSON에 없는 숫자 필드를 0으로 채우므로, 0 이하이면 GameController가 기본 슬로 배속을 쓴다
+        /// </remarks>
+        public float Speed => speed;
 
         #endregion
     }
