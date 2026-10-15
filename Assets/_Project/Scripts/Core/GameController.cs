@@ -49,7 +49,7 @@ namespace FMV
             videoPlayer.ClipEnd += ClipEnd;
 
             ConnectMediaButton();
-            // TODO: actionUIPrefab을 생성해 actionUIController.SetSelectUI로 등록한다
+            ConnectActionUIController();
         }
 
         private void Start()
@@ -120,7 +120,7 @@ namespace FMV
 
             if (nextId == null)
             {
-                // TODO : 타이틀 씬으로 변경
+                // TODO: 타이틀 씬으로 변경
             }
 
             gameState.UpdateGrade(nextId);
@@ -151,6 +151,18 @@ namespace FMV
 
             playButton.Bind(videoPlayer.RenewPlay);
             mediaVisual = ui.GetComponentInChildren<ButtonVisual>();
+        }
+
+        /// <summary>
+        /// SelectUI 프리팹을 생성해 ActionUIController에 등록한다
+        /// </summary>
+        /// <remarks>
+        /// 프리팹 원본이 숨김(alpha 0) 상태라 생성 직후에는 보이지 않고, Action 단계에서 ActionUIController가 켠다
+        /// </remarks>
+        private void ConnectActionUIController()
+        {
+            GameObject ui = Instantiate(actionUIPrefab);
+            actionUIController.SetSelectUI(ui);
         }
 
         #endregion
