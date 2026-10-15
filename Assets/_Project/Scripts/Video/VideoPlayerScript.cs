@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
@@ -27,8 +28,10 @@ namespace FMV
         private readonly string[] slotIds = new string[MaxVideoCount];
         private int playIndex = 0;
         private float playSpeed = 1f;
-        private bool isLooping = false;
         private Vector2 loop = Vector2.zero;
+
+        private Coroutine loopRoutine;
+        private Coroutine actionRoutine;
 
         #endregion
 
@@ -38,6 +41,11 @@ namespace FMV
         /// 재생 중인 클립이 끝까지 재생되면 결과를 넘겨 호출된다
         /// </summary>
         public event Action<NodeResult> ClipEnd;
+
+        /// <summary>
+        /// 재생 중인 클립이 WaitActionTime으로 정한 시간에 도달하면 호출된다
+        /// </summary>
+        public event Action OnActionReached;
 
         #endregion
 
@@ -59,14 +67,6 @@ namespace FMV
                 videoPlayers.Add(player);
 
                 player.loopPointReached += OnLoopPointReached;
-            }
-        }
-
-        private void Update()
-        {
-            if (isLooping && videoPlayers[playIndex].isPlaying && videoPlayers[playIndex].time >= loop.y)
-            {
-                videoPlayers[playIndex].time = loop.x;
             }
         }
 
@@ -139,7 +139,7 @@ namespace FMV
         /// </summary>
         /// <remarks>
         /// PrepareNextClips로 준비된 id만 재생할 수 있다.
-        /// 구간 반복은 해제되므로 필요하면 재생 후 SetLoopTime을 다시 호출한다
+        /// 구간 반복과 Action 시간 대기는 해제되므로 필요하면 재생 후 SetLoopTime·WaitActionTime을 다시 호출한다
         /// </remarks>
         /// <param name="id"> 재생할 분기 id </param>
         public void PlayClip(string id)
@@ -159,6 +159,7 @@ namespace FMV
 
             playIndex = idx;
             ResetLoop();
+            StopWaitAction();
             videoPlayers[playIndex].playbackSpeed = playSpeed;
             videoPlayers[playIndex].Play();
         }
@@ -206,25 +207,97 @@ namespace FMV
 
         #endregion
 
+        #region Action Time
+
+        /// <summary>
+        /// 현재 클립이 지정한 시간에 도달하면 OnActionReached로 알린다
+        /// </summary>
+        /// <remarks>
+        /// 이미 기다리는 중이면 이전 대기를 버리고 새 시간으로 바꾼다.
+        /// 어떤 Action인지는 모르고 시간만 알린다. 판단은 받는 쪽이 한다
+        /// </remarks>
+        /// <param name="time"> 알릴 클립 시간(초) </param>
+        public void WaitActionTime(float time)
+        {
+            StopWaitAction();
+            actionRoutine = StartCoroutine(WaitActionRoutine(time));
+        }
+
+        private void StopWaitAction()
+        {
+            if (actionRoutine != null)
+            {
+                StopCoroutine(actionRoutine);
+                actionRoutine = null;
+            }
+        }
+
+        private IEnumerator WaitActionRoutine(float time)
+        {
+            while (videoPlayers[playIndex].time < time)
+            {
+                yield return null;
+            }
+
+            actionRoutine = null;
+            OnActionReached?.Invoke();
+        }
+
+        #endregion
+
         #region Loop
 
         /// <summary>
-        /// 현재 클립의 구간 반복 설정
+        /// 현재 클립의 구간 반복과 반복 중 재생 속도 설정
         /// </summary>
+        /// <remarks>
+        /// 반복 중일 때만 코루틴이 돌고, ResetLoop나 PlayClip에서 멈춘다.
+        /// 속도는 현재 플레이어에만 적용하고 playSpeed는 바꾸지 않으므로, 반복이 풀리면 원래 속도로 돌아간다
+        /// </remarks>
         /// <param name="loopTime"> x = 반복 시작 시간, y = 반복 끝 시간(초) </param>
-        public void SetLoopTime(Vector2 loopTime)
+        /// <param name="speed"> 반복 중 재생 배속 </param>
+        public void SetLoopTime(Vector2 loopTime, float speed = 1f)
         {
+            ResetLoop();
             loop = loopTime;
-            isLooping = true;
+            videoPlayers[playIndex].playbackSpeed = speed;
+            loopRoutine = StartCoroutine(LoopRoutine());
         }
 
         /// <summary>
-        /// 구간 반복 해제
+        /// 구간 반복 해제. 재생 속도도 playSpeed로 되돌린다
         /// </summary>
         public void ResetLoop()
         {
+            if (loopRoutine != null)
+            {
+                StopCoroutine(loopRoutine);
+                loopRoutine = null;
+            }
+
             loop = Vector2.zero;
-            isLooping = false;
+            videoPlayers[playIndex].playbackSpeed = playSpeed;
+        }
+
+        private IEnumerator LoopRoutine()
+        {
+            while (true)
+            {
+                VideoPlayer player = videoPlayers[playIndex];
+                if (player.isPlaying && player.time >= loop.y)
+                {
+                    player.time = loop.x;
+
+                    // time 설정은 비동기 탐색이라 끝나기 전까지 time은 이전 값을 돌려준다.
+                    // 그 사이 다시 설정하면 탐색이 끝나지 못하므로, 구간 안으로 돌아올 때까지 기다린다
+                    while (player.time >= loop.y)
+                    {
+                        yield return null;
+                    }
+                }
+
+                yield return null;
+            }
         }
 
         #endregion
