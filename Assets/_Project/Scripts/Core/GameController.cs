@@ -27,6 +27,8 @@ namespace FMV
 
         #region Private Fields
 
+        private const float DefaultActionSpeed = 0.5f;
+
         private GameState gameState = new GameState();
         private GameInput gameInput = new GameInput();
 
@@ -47,6 +49,7 @@ namespace FMV
             }
 
             videoPlayer.ClipEnd += ClipEnd;
+            videoPlayer.OnActionReached += EnterAction;
 
             ConnectMediaButton();
             ConnectActionUIController();
@@ -109,8 +112,49 @@ namespace FMV
 
             gameState.GamePhase.SetPhase(PhaseState.Play);
 
-            // TODO: Action이 있는 분기(TryGetNodeInfo)면 클립이 ActionStart에 도달했을 때
-            //       Action 단계로 바꾸고 선택지 UI를 띄운다. VideoPlayerScript에 현재 재생 시간 조회가 필요하다
+            // nodes.json에 없는 분기는 Action 없이 클립 끝까지 재생하므로 기다리지 않는다
+            if (gameData.TryGetNodeInfo(currentId, out JsonNodeInfo info))
+            {
+                videoPlayer.WaitActionTime(info.Timing.ActionStart);
+            }
+        }
+
+        /// <summary>
+        /// 클립이 ActionStart에 도달하면 Action 단계로 바꾸고, 노드 타입에 맞게 반복 구간과 UI를 켠다
+        /// </summary>
+        /// <remarks>
+        /// 비디오는 시간만 알리고, 어떤 Action인지는 여기서 노드 정보로 판단한다
+        /// </remarks>
+        private void EnterAction()
+        {
+            if (!gameData.TryGetNodeInfo(gameState.NewestGrade, out JsonNodeInfo info))
+            {
+                return;
+            }
+
+            gameState.GamePhase.SetPhase(PhaseState.Action);
+
+            // LoopEnd가 LoopStart 이하이면 반복하지 않는 분기다
+            JsonNodeTime timing = info.Timing;
+            if (timing.LoopEnd > timing.LoopStart)
+            {
+                float speed = timing.Speed > 0f ? timing.Speed : DefaultActionSpeed;
+                videoPlayer.SetLoopTime(new Vector2(timing.LoopStart, timing.LoopEnd), speed);
+            }
+
+            // TODO: 이미 보이던 미디어 버튼을 숨긴다
+            switch (info.Type)
+            {
+                case "Choice":
+                    actionUIController.ActiveSelectUI();
+                    break;
+                case "QTE":
+                    // TODO: QTE UI 표시. QTE는 반복 구간이 없어 SetLoopTime을 타지 않으므로 슬로 배속을 따로 걸어야 한다
+                    break;
+                default:
+                    Debug.LogError($"Unknown action type: {info.Type}");
+                    break;
+            }
         }
 
         private void ClipEnd(NodeResult result)
