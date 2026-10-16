@@ -197,6 +197,19 @@ namespace FMV
         }
 
         /// <summary>
+        /// 현재 클립에만 Action 중 재생 속도를 건다
+        /// </summary>
+        /// <remarks>
+        /// 반복 구간이 없는 QTE처럼 SetLoopTime을 타지 않는 Action에서 쓴다.
+        /// playSpeed는 바꾸지 않으므로, 다음 클립의 PlayClip에서 원래 속도로 돌아간다
+        /// </remarks>
+        /// <param name="speed"> Action 중 재생 배속 </param>
+        public void SetActionSpeed(float speed)
+        {
+            videoPlayers[playIndex].playbackSpeed = speed;
+        }
+
+        /// <summary>
         /// 클립이 끝까지 재생되면 ClipEnd로 다시 알림
         /// </summary>
         /// <param name="source"> 재생이 끝난 플레이어 </param>
