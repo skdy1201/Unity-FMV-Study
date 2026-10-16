@@ -8,14 +8,11 @@ namespace FMV
     /// <summary>
     /// 제한 시간 동안 타이머 바를 줄이고, 시간이 다 되면 알린다
     /// </summary>
-    public class TimerUI : MonoBehaviour
+    public class QTETimer : MonoBehaviour
     {
         #region Serialized Fields
 
         [SerializeField] private Image timerBar;
-
-        // DEBUG: TestScene에서 Start로 바로 돌려 보려고 쓰는 시간
-        [SerializeField] private float testDuration = 5f;
 
         [SerializeField] private Image timerAnimationImage;
         [SerializeField] private Sprite[] frames;
@@ -36,17 +33,7 @@ namespace FMV
         /// <summary>
         /// 제한 시간이 다 되어 타이머 바가 비면 호출된다
         /// </summary>
-        public event Action EndTimer;
-
-        #endregion
-
-        #region Unity Lifecycle
-
-        // DEBUG: 테스트용 자동 시작. QTEUIView에서 ActiveTimer를 부르게 되면 지운다
-        private void Start()
-        {
-            ActiveTimer(testDuration);
-        }
+        public event Action OnTimerEnd;
 
         #endregion
 
@@ -73,7 +60,7 @@ namespace FMV
 
         /// <remarks>
         /// fillAmount는 0~1 비율이라 남은 시간 / 제한 시간을 그대로 넣는다.
-        /// 마지막 프레임에 time이 음수가 될 수 있어, 루프가 끝나면 바를 0으로 맞춘 뒤 EndTimer를 호출한다
+        /// 마지막 프레임에 time이 음수가 될 수 있어, 루프가 끝나면 바를 0으로 맞춘 뒤 OnTimerEnd를 호출한다
         /// </remarks>
         private IEnumerator OnTimer(float duration)
         {
@@ -94,7 +81,7 @@ namespace FMV
             StopCoroutine(animationRoutine);
             timerAnimationImage.sprite = frames[0];
 
-            EndTimer?.Invoke();
+            OnTimerEnd?.Invoke();
         }
 
         /// <remarks>
