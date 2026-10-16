@@ -15,19 +15,6 @@ namespace FMV
         [SerializeField] private QTETimer qteTimer;
         [SerializeField] private QTEClick qteClick;
 
-        // DEBUG: TestScene에서 Start로 바로 돌려 보려고 쓰는 제한 시간
-        [SerializeField] private float testDuration = 5f;
-
-        #endregion
-
-        #region Unity Lifecycle
-
-        // DEBUG: 테스트용 자동 시작. ActionUIController에서 ActiveQTE를 부르게 되면 지운다
-        private void Start()
-        {
-            ActiveQTE(testDuration);
-        }
-
         #endregion
 
         #region QTE
