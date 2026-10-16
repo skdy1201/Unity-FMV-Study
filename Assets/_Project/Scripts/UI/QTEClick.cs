@@ -71,6 +71,11 @@ namespace FMV
         {
             float current = sizeRatio * timingImage.rectTransform.localScale.x / targetImage.rectTransform.localScale.x;
 
+            // DEBUG: 성공 구간(inbound ~ outbound)을 정하려고 클릭한 순간의 비율과 보이는 크기를 찍는다
+            float timingWidth = timingImage.rectTransform.rect.width * timingImage.rectTransform.localScale.x;
+            float targetWidth = targetImage.rectTransform.rect.width * targetImage.rectTransform.localScale.x;
+            Debug.Log($"QTE ratio: {current:F2} (timing {timingWidth:F1} / target {targetWidth:F1}), range {inbound} ~ {outbound}");
+
             return (current <= outbound) && (current >= inbound);
         }
 

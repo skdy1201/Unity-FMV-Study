@@ -20,12 +20,28 @@ namespace FMV
 
         #endregion
 
+        #region Private Fields
+
+        // DEBUG: GameController와 같은 입력 경로로 클릭을 받아, 원 위 클릭이 UI로 걸러지지 않는지도 함께 확인한다
+        private GameInput testInput = new GameInput();
+
+        #endregion
+
         #region Unity Lifecycle
 
         // DEBUG: 테스트용 자동 시작. ActionUIController에서 ActiveQTE를 부르게 되면 지운다
         private void Start()
         {
             ActiveQTE(testDuration);
+        }
+
+        // DEBUG: 테스트용 클릭 판정. GameController.HandleInput에서 CheckQTE를 부르게 되면 지운다
+        private void Update()
+        {
+            if (testInput.IsScreenClicked())
+            {
+                Debug.Log(CheckQTE() ? "QTE Success" : "QTE Fail");
+            }
         }
 
         #endregion
