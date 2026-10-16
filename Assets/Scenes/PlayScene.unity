@@ -564,11 +564,19 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 329930262127566388, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
+      propertyPath: qteUIPrefab
+      value: 
+      objectReference: {fileID: 539041520520421982, guid: 1092a8778d0b30f44bb8fabe3d0315c7, type: 3}
+    - target: {fileID: 329930262127566388, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
       propertyPath: videoPlayer
       value: 
       objectReference: {fileID: 3559311017357140289}
     - target: {fileID: 329930262127566388, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
       propertyPath: actionUIPrefab
+      value: 
+      objectReference: {fileID: 5807117386361588807, guid: ae1516f80579c06409b93d0d2273e03e, type: 3}
+    - target: {fileID: 329930262127566388, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
+      propertyPath: selectUIPrefab
       value: 
       objectReference: {fileID: 5807117386361588807, guid: ae1516f80579c06409b93d0d2273e03e, type: 3}
     - target: {fileID: 329930262127566388, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}

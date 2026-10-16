@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Video;
 
 namespace FMV
@@ -20,7 +21,9 @@ namespace FMV
 
         [SerializeField] private VideoPlayerScript videoPlayer;
         [SerializeField] private GameObject mediaInteractUI;
-        [SerializeField] private GameObject actionUIPrefab;
+        [FormerlySerializedAs("actionUIPrefab")]
+        [SerializeField] private GameObject selectUIPrefab;
+        [SerializeField] private GameObject qteUIPrefab;
         [SerializeField] private ActionUIController actionUIController;
 
         #endregion
@@ -135,11 +138,13 @@ namespace FMV
 
             gameState.GamePhase.SetPhase(PhaseState.Action);
 
-            // LoopEnd가 LoopStart 이하이면 반복하지 않는 분기다
             JsonNodeTime timing = info.Timing;
+
+            float speed = timing.Speed > 0f ? timing.Speed : DefaultActionSpeed;
+
+            // LoopEnd가 LoopStart 이하이면 반복하지 않는 분기다
             if (timing.LoopEnd > timing.LoopStart)
             {
-                float speed = timing.Speed > 0f ? timing.Speed : DefaultActionSpeed;
                 videoPlayer.SetLoopTime(new Vector2(timing.LoopStart, timing.LoopEnd), speed);
             }
 
@@ -152,7 +157,9 @@ namespace FMV
                     actionUIController.ActiveSelectUI(info.Options);
                     break;
                 case "QTE":
-                    // TODO: QTE UI 표시. QTE는 반복 구간이 없어 SetLoopTime을 타지 않으므로 슬로 배속을 따로 걸어야 한다
+                    // QTE는 반복 구간이 없어 SetLoopTime을 타지 않으므로 슬로 배속을 따로 건다
+                    videoPlayer.SetActionSpeed(speed);
+                    actionUIController.ActiveQTEUI(timing.TimeLimit);
                     break;
                 default:
                     Debug.LogError($"Unknown action type: {info.Type}");
@@ -172,6 +179,15 @@ namespace FMV
         {
             gameState.GamePhase.SetPhase(PhaseState.Out, result);
             ClipEnd(result);
+        }
+
+        /// <summary>
+        /// QTE 판정 결과를 성공·실패 분기 결과로 바꿔 Action을 끝낸다
+        /// </summary>
+        /// <param name="isSuccess"> 성공 범위 안에서 클릭했으면 true </param>
+        private void QTEChecked(bool isSuccess)
+        {
+            ExitAction(isSuccess ? NodeResult.Success : NodeResult.Fail);
         }
 
         private void ClipEnd(NodeResult result)
@@ -234,16 +250,20 @@ namespace FMV
         }
 
         /// <summary>
-        /// SelectUI 프리팹을 생성해 ActionUIController에 등록한다
+        /// SelectUI·QTEUI 프리팹을 생성해 ActionUIController에 등록하고, 각 결과를 받도록 구독한다
         /// </summary>
         /// <remarks>
         /// 프리팹 원본이 숨김(alpha 0) 상태라 생성 직후에는 보이지 않고, Action 단계에서 ActionUIController가 켠다
         /// </remarks>
         private void ConnectActionUIController()
         {
-            GameObject ui = Instantiate(actionUIPrefab);
-            actionUIController.SetSelectUI(ui);
+            GameObject selectUI = Instantiate(selectUIPrefab);
+            actionUIController.SetSelectUI(selectUI);
             actionUIController.OptionSelected += ExitAction;
+
+            GameObject qteUI = Instantiate(qteUIPrefab);
+            actionUIController.SetQTEUI(qteUI);
+            actionUIController.OnQTEChecked += QTEChecked;
         }
 
         #endregion
@@ -256,14 +276,27 @@ namespace FMV
         /// </remarks>
         private void HandleInput()
         {
-            if (mediaVisual == null || gameState.GamePhase.Current != PhaseState.Play)
+            if (mediaVisual == null )
             {
                 return;
             }
 
             if (gameInput.IsScreenClicked())
             {
-                mediaVisual.ToggleVisible();
+                if(gameState.GamePhase.Current == PhaseState.Play)
+                {
+                    mediaVisual.ToggleVisible();
+                }
+                else if(gameState.GamePhase.Current == PhaseState.Action)
+                {
+                    if(gameData.TryGetNodeInfo(gameState.NewestGrade, out JsonNodeInfo info))
+                    {
+                        if(info.Type == "QTE")
+                        {
+                            actionUIController.CheckQTE();
+                        }
+                    }
+                }
             }
         }
 
