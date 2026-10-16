@@ -20,10 +20,10 @@
       "id": "3",
       "type": "QTE",
       "timing": {
-        "actionStart": 8.0,
+        "actionStart": 0.0,
         "loopStart": 0.0,
         "loopEnd": 0.0,
-        "timeLimit": 3.0
+        "timeLimit": 5.0
       },
       "timeoutResult": 2,
       "options": [
