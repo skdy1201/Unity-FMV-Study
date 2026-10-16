@@ -65,6 +65,20 @@ namespace FMV
         }
 
         /// <summary>
+        /// 버튼을 지정한 상태로 보이거나 숨기고, 숨겼을 때는 클릭도 받지 않게 한다
+        /// </summary>
+        /// <remarks>
+        /// 현재 상태를 모르는 곳에서 ToggleVisible을 부르면 숨겨야 할 버튼이 오히려 보일 수 있어, 상태를 직접 정할 때 쓴다
+        /// </remarks>
+        /// <param name="visible"> 보이게 하려면 true </param>
+        public void SetVisible(bool visible)
+        {
+            isVisible = visible;
+
+            ApplyVisible();
+        }
+
+        /// <summary>
         /// 현재 스프라이트와 일치하는 쌍을 찾아 다음 스프라이트로 교체한다
         /// </summary>
         public void ChangeImage()

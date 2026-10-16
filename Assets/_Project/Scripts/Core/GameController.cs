@@ -143,7 +143,9 @@ namespace FMV
                 videoPlayer.SetLoopTime(new Vector2(timing.LoopStart, timing.LoopEnd), speed);
             }
 
-            // TODO: 이미 보이던 미디어 버튼을 숨긴다
+            // Play 단계에서 켜 둔 미디어 버튼이 Action 중에도 눌려 영상을 멈추지 않도록 숨긴다
+            mediaVisual.SetVisible(false);
+
             switch (info.Type)
             {
                 case "Choice":
