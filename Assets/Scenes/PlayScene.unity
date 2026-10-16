@@ -587,6 +587,10 @@ PrefabInstance:
       propertyPath: gameData.cladogram
       value: 
       objectReference: {fileID: 11400000, guid: f4cc8e4ca11d9ab4290431c893f68005, type: 2}
+    - target: {fileID: 329930262127566388, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
+      propertyPath: gameData.endingJson
+      value: 
+      objectReference: {fileID: 4900000, guid: 93b32b0ad4811c546b541a038adf686a, type: 3}
     - target: {fileID: 2809020022974706684, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.4738

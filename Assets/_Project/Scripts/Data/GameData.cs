@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FMV
 {
     /// <summary>
-    /// videos.json과 nodes.json을 읽어 영상 id별 VideoClip 이름과 Action 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다
+    /// videos.json, nodes.json, endings.json을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다
     /// </summary>
     [System.Serializable]
     public class GameData : ISetting
@@ -13,6 +13,7 @@ namespace FMV
 
         [SerializeField] private TextAsset videoJson;
         [SerializeField] private TextAsset nodeJson;
+        [SerializeField] private TextAsset endingJson;
         [SerializeField] private Cladogram cladogram;
 
         #endregion
@@ -21,6 +22,7 @@ namespace FMV
 
         private Dictionary<string, string> videoMapping = new Dictionary<string, string>();
         private Dictionary<string, JsonNodeInfo> nodeMapping = new Dictionary<string, JsonNodeInfo>();
+        private Dictionary<string, JsonEndingInfo> endingMapping = new Dictionary<string, JsonEndingInfo>();
         private Graph cladoGraph;
 
         #endregion
@@ -64,6 +66,7 @@ namespace FMV
         {
             ClipIdMapping();
             NodeInfoMapping();
+            EndingInfoMapping();
         }
 
         /// <summary>
@@ -105,6 +108,22 @@ namespace FMV
             }
         }
 
+        /// <summary>
+        /// 엔딩 분기 id를 키로, 엔딩 정보를 값으로 등록한다
+        /// </summary>
+        /// <remarks>
+        /// 같은 id가 여러 번 있으면 뒤에 나온 값으로 덮어쓴다
+        /// </remarks>
+        private void EndingInfoMapping()
+        {
+            JsonEndingTable table = JsonUtility.FromJson<JsonEndingTable>(endingJson.text);
+
+            foreach (JsonEndingInfo ending in table.Endings)
+            {
+                endingMapping[ending.ID] = ending;
+            }
+        }
+
         #endregion
 
         #region Lookup
@@ -136,6 +155,20 @@ namespace FMV
         public bool TryGetNodeInfo(string id, out JsonNodeInfo info)
         {
             return nodeMapping.TryGetValue(id, out info);
+        }
+
+        /// <summary>
+        /// 분기 id로 엔딩 정보를 찾는다
+        /// </summary>
+        /// <remarks>
+        /// endings.json에 없는 분기는 엔딩이 아니므로 에러를 남기지 않는다
+        /// </remarks>
+        /// <param name="id"> 분기 id </param>
+        /// <param name="info"> 찾은 엔딩 정보. 없으면 null </param>
+        /// <returns> 엔딩 분기면 true </returns>
+        public bool TryGetEndingInfo(string id, out JsonEndingInfo info)
+        {
+            return endingMapping.TryGetValue(id, out info);
         }
 
         #endregion
