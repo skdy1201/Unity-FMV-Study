@@ -17,7 +17,22 @@ namespace FMV
 
         #endregion
 
+        #region Private Fields
+
+        private Vector2 qtePosition;
+
+        #endregion
+
         #region QTE
+
+        /// <summary>
+        /// 노드마다 다른 QTE 위치를 받아 둔다
+        /// </summary>
+        /// <param name="position"> 노드 정보에 적힌 QTE 위치 </param>
+        public void SetQTEPosition(Vector2 position)
+        {
+            qtePosition = position;
+        }
 
         /// <summary>
         /// 타이머와 타이밍 원을 같은 제한 시간으로 동시에 시작한다
