@@ -179,7 +179,22 @@ namespace FMV
 
             if (nextId == null)
             {
-                gameState.UpdateGrade(gameState.CheckpointGrade);
+                // TODO: QTE(3) UI가 없어 4·5 쪽에 가지 못하므로, 4a·5 엔딩 흐름은 QTE를 만든 뒤 확인한다
+                if (!gameData.TryGetEndingInfo(currentId, out JsonEndingInfo ending))
+                {
+                    // 막다른 분기는 모두 endings.json에 있어야 한다
+                    Debug.LogError($"Ending info not found: {currentId}");
+                }
+                else if (ending.IsFinal)
+                {
+                    // 빈 문자열이면 다음 실행 때 GameEntry가 시작 분기부터 진행한다
+                    gameState.UpdateGrade(string.Empty);
+                }
+                else
+                {
+                    gameState.AddFail();
+                    gameState.UpdateGrade(gameState.CheckpointGrade);
+                }
 
                 SceneChange.ChangeScene("TitleScene");
 
