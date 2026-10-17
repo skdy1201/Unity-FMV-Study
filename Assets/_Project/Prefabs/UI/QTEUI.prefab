@@ -233,7 +233,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 700, y: 700}
+  m_SizeDelta: {x: 400, y: 400}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3227177904439596012
 CanvasRenderer:
@@ -263,7 +263,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1be20745d5177b547b72f916a834d1d5, type: 3}
+  m_Sprite: {fileID: 2780971255824004611, guid: 1be20745d5177b547b72f916a834d1d5, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -325,8 +325,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QTEClick
   targetImage: {fileID: 2204612620134717085}
   timingImage: {fileID: 1133302672857157620}
-  outbound: 1
-  inbound: 0.6
+  outbound: 1.08
+  inbound: 0.62
   timingScale: {x: 1, y: 1, z: 1}
 --- !u!1 &6488315713492834260
 GameObject:
