@@ -178,6 +178,7 @@ namespace FMV
         private void ExitAction(NodeResult result)
         {
             gameState.GamePhase.SetPhase(PhaseState.Out, result);
+            Debug.Log($"NodeResult is {result}");
             ClipEnd(result);
         }
 
@@ -293,6 +294,7 @@ namespace FMV
                     {
                         if(info.Type == "QTE")
                         {
+                            Debug.Log("OnQTE");
                             actionUIController.CheckQTE();
                         }
                     }

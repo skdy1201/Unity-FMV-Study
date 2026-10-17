@@ -71,6 +71,9 @@ namespace FMV
         {
             float current = sizeRatio * timingImage.rectTransform.localScale.x / targetImage.rectTransform.localScale.x;
 
+            // TEST: 클릭한 순간 타이밍 원이 타겟의 몇 배인지 확인한다
+            Debug.Log($"QTE ratio {current} (success {inbound} ~ {outbound})");
+
             return (current <= outbound) && (current >= inbound);
         }
 

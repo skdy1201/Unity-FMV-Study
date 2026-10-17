@@ -129,6 +129,14 @@ namespace FMV
         {
             bool isSuccess = qteUIView.CheckQTE();
 
+            Debug.Log($"QTE {isSuccess}");
+
+            // TEST: 판정 범위를 확인하려고 실패하면 QTE를 끝내지 않고 계속 클릭받는다
+            if (!isSuccess)
+            {
+                return;
+            }
+
             ClearQTEUI();
             OnQTEChecked?.Invoke(isSuccess);
         }
