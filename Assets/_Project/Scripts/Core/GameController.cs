@@ -190,6 +190,17 @@ namespace FMV
             ExitAction(isSuccess ? NodeResult.Success : NodeResult.Fail);
         }
 
+        /// <summary>
+        /// QTE 제한 시간 안에 판정하지 못하면, 노드에 적힌 시간 초과 결과로 Action을 끝낸다
+        /// </summary>
+        private void QTETimeOut()
+        {
+            if (gameData.TryGetNodeInfo(gameState.NewestGrade, out JsonNodeInfo info))
+            {
+                ExitAction(info.TimeoutResult);
+            }
+        }
+
         private void ClipEnd(NodeResult result)
         {
             string currentId = gameState.NewestGrade;
@@ -264,6 +275,7 @@ namespace FMV
             GameObject qteUI = Instantiate(qteUIPrefab);
             actionUIController.SetQTEUI(qteUI);
             actionUIController.OnQTEChecked += QTEChecked;
+            actionUIController.OnQTETimeOut += QTETimeOut;
         }
 
         #endregion

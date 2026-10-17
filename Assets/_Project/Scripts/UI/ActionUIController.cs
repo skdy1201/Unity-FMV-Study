@@ -27,6 +27,7 @@ namespace FMV
 
         private CanvasGroup qteUIGroup;
         private QTEUIView qteUIView;
+        private bool isQTEActive;
 
         #endregion
 
@@ -41,6 +42,11 @@ namespace FMV
         /// QTE를 판정하면, QTE UI를 숨긴 뒤 성공 여부를 넘겨 호출된다
         /// </summary>
         public event Action<bool> OnQTEChecked;
+
+        /// <summary>
+        /// 판정 전에 QTE 제한 시간이 다 되면, QTE UI를 숨긴 뒤 호출된다
+        /// </summary>
+        public event Action OnQTETimeOut;
 
         #endregion
 
@@ -98,6 +104,7 @@ namespace FMV
         {
             qteUIGroup = qteInstance.GetComponent<CanvasGroup>();
             qteUIView = qteInstance.GetComponent<QTEUIView>();
+            qteUIView.OnTimeOut += QTETimeOut;
         }
 
         /// <summary>
@@ -108,6 +115,7 @@ namespace FMV
         {
             qteUIView.ActiveQTE(duration);
 
+            isQTEActive = true;
             SetGroupVisible(qteUIGroup, true);
         }
 
@@ -116,6 +124,7 @@ namespace FMV
         /// </summary>
         public void ClearQTEUI()
         {
+            isQTEActive = false;
             SetGroupVisible(qteUIGroup, false);
         }
 
@@ -131,6 +140,20 @@ namespace FMV
 
             ClearQTEUI();
             OnQTEChecked?.Invoke(isSuccess);
+        }
+
+        /// <remarks>
+        /// 클릭으로 판정해 QTE를 끝내도 타이머 코루틴은 끝까지 돌기 때문에, QTE가 꺼진 뒤에 온 알림은 무시한다
+        /// </remarks>
+        private void QTETimeOut()
+        {
+            if (!isQTEActive)
+            {
+                return;
+            }
+
+            ClearQTEUI();
+            OnQTETimeOut?.Invoke();
         }
 
         #endregion

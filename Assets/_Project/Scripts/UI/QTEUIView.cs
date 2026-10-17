@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace FMV
@@ -20,6 +21,24 @@ namespace FMV
         #region Private Fields
 
         private Vector2 qtePosition;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// 제한 시간이 다 되어 타이머가 끝나면 호출된다
+        /// </summary>
+        public event Action OnTimeOut;
+
+        #endregion
+
+        #region Unity Lifecycle
+
+        private void Awake()
+        {
+            qteTimer.OnTimerEnd += TimerEnd;
+        }
 
         #endregion
 
@@ -51,6 +70,14 @@ namespace FMV
         public bool CheckQTE()
         {
             return qteClick.QTECheck();
+        }
+
+        /// <remarks>
+        /// 타이머는 프리팹 안쪽 파츠라 ActionUIController가 직접 참조하지 않으므로, 이 컴포넌트가 받아 그대로 넘긴다
+        /// </remarks>
+        private void TimerEnd()
+        {
+            OnTimeOut?.Invoke();
         }
 
         #endregion
