@@ -42,8 +42,8 @@
       },
       "timeoutResult": 4,
       "options": [
-        { "result": 3, "label": "탑에 오른다" },
-        { "result": 4, "label": "물러선다" }
+        { "result": 3, "label": "살살 뛴다" },
+        { "result": 4, "label": "세게 뛴다" }
       ]
     }
   ]
