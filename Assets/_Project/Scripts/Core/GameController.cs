@@ -298,22 +298,22 @@ namespace FMV
         /// </remarks>
         private void HandleInput()
         {
-            if (mediaVisual == null )
+            if (mediaVisual == null)
             {
                 return;
             }
 
             if (gameInput.IsScreenClicked())
             {
-                if(gameState.GamePhase.Current == PhaseState.Play)
+                if (gameState.GamePhase.Current == PhaseState.Play)
                 {
                     mediaVisual.ToggleVisible();
                 }
-                else if(gameState.GamePhase.Current == PhaseState.Action)
+                else if (gameState.GamePhase.Current == PhaseState.Action)
                 {
-                    if(gameData.TryGetNodeInfo(gameState.NewestGrade, out JsonNodeInfo info))
+                    if (gameData.TryGetNodeInfo(gameState.NewestGrade, out JsonNodeInfo info))
                     {
-                        if(info.Type == "QTE")
+                        if (info.Type == "QTE")
                         {
                             actionUIController.CheckQTE();
                         }
