@@ -201,6 +201,17 @@ namespace FMV
             return endingMapping.TryGetValue(id, out info);
         }
 
+        /// <summary>
+        /// 업적 id로 업적 정보를 찾는다
+        /// </summary>
+        /// <param name="id"> 업적 id </param>
+        /// <param name="info"> 찾은 업적 정보. 없으면 null </param>
+        /// <returns> achievements.json에 있는 업적이면 true </returns>
+        public bool TryGetAchievementInfo(string id, out JsonAchievementInfo info)
+        {
+            return achievementMapping.TryGetValue(id, out info);
+        }
+
         #endregion
     }
 }
