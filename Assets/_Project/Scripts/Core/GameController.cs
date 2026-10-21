@@ -51,6 +51,9 @@ namespace FMV
                 set.Init();
             }
 
+            // ISetting.Init은 인자를 받지 않으므로, GameData가 불러온 기록을 Init 뒤에 GameState로 넘긴다
+            gameState.GameSave = gameData.Save;
+
             videoPlayer.ClipEnd += ClipEnd;
             videoPlayer.OnActionReached += EnterAction;
 
@@ -121,6 +124,9 @@ namespace FMV
                 gameState.CheckpointGrade = currentId;
                 videoPlayer.WaitActionTime(info.Timing.ActionStart);
             }
+
+            // 분기에 들어갈 때마다 저장해, 중간에 꺼져도 이 분기부터 다시 시작한다
+            gameState.Save();
         }
 
         /// <summary>
@@ -221,9 +227,13 @@ namespace FMV
                 }
                 else
                 {
-                    gameState.AddFail();
+                    // TODO: 떨어지기(실패 횟수) 추가
+                    //gameState.AddFail();
                     gameState.UpdateGrade(gameState.CheckpointGrade);
                 }
+
+                // 엔딩은 GameEntry를 다시 타지 않으므로, 씬을 바꾸기 전에 엔딩 뒤 기록을 저장한다
+                gameState.Save();
 
                 SceneChange.ChangeScene("TitleScene");
 

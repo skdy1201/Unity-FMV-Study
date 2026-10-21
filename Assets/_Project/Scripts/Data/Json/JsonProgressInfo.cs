@@ -22,5 +22,53 @@ namespace FMV
         [SerializeField] private string maxGradeId = string.Empty;
 
         #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// 지금까지 들어간 분기 id 목록
+        /// </summary>
+        /// <remarks>
+        /// 목록 자체를 바꾸면 null이 들어갈 수 있어 set을 두지 않는다. 내용은 Add로 바꾼다
+        /// </remarks>
+        public List<string> Visited => visited;
+
+        /// <summary>
+        /// 누적 실패 횟수
+        /// </summary>
+        public int FallCount
+        {
+            get => fallCount;
+            set => fallCount = value;
+        }
+
+        /// <summary>
+        /// 마지막으로 도달한 분기 id. 기록이 없으면 빈 문자열
+        /// </summary>
+        public string NewestId
+        {
+            get => newestId;
+            set => newestId = value;
+        }
+
+        /// <summary>
+        /// 최근에 들어간 Action(선택지·QTE) 분기 id. 배드 엔딩으로 끝나면 이 분기로 되돌아간다
+        /// </summary>
+        public string LastSelect
+        {
+            get => lastSelect;
+            set => lastSelect = value;
+        }
+
+        /// <summary>
+        /// 지금까지 가장 멀리 간 분기 id. 기록이 없으면 빈 문자열
+        /// </summary>
+        public string MaxGradeId
+        {
+            get => maxGradeId;
+            set => maxGradeId = value;
+        }
+
+        #endregion
     }
 }

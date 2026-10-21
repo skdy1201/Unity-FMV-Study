@@ -1,82 +1,75 @@
-using UnityEngine;
-
 namespace FMV
 {
     /// <summary>
-    /// 현재 단계, 최대 단계, 실패 횟수를 들고 있고 PlayerPrefs로 저장·불러오기를 한다.
+    /// 현재 단계, 최대 단계, 실패 횟수 같은 진행 기록을 save.json 데이터로 읽고 바꾸며, SaveFile로 저장한다.
     /// 분기 안의 진행 단계는 저장하지 않는 GamePhase로 따로 갖고 있다
     /// </summary>
     /// <remarks>
     /// GameController가 소유하는 일반 클래스라 씬 오브젝트 없이 쓴다.
+    /// 기록은 GameData가 불러온 JsonSaveData와 같은 객체를 GameController가 넘겨주므로, 여기서 바꾼 값이 곧 저장될 값이다.
     /// 단계는 분기 id("2a" 같은 값)로 들고 있어 Graph·GameData와 같은 값을 쓴다
     /// </remarks>
     public class GameState : ISetting
     {
         #region Private Fields
 
-        private const string MaxGradeKey = "maxGrade";
-        private const string FailCountKey = "failCount";
-        private const string NewestGradeKey = "newestGrade";
-
-        private string maxGrade = string.Empty;
-        private string newestGrade = string.Empty;
-        private string checkpointGrade = string.Empty;
-        private int failCount = 0;
-
         private GamePhase gamePhase = new GamePhase();
+        private JsonSaveData gameSave;
 
         #endregion
 
         #region Properties
 
         /// <summary>
-        /// 지금까지 가장 멀리 간 분기 id. 기록이 없으면 빈 문자열
+        /// 분기 안의 진행 단계. 저장하지 않는다
         /// </summary>
-        public string MaxGrade => maxGrade;
+        public GamePhase GamePhase => gamePhase;
 
         /// <summary>
-        /// 이번 판에서 마지막으로 도달한 분기 id. 기록이 없으면 빈 문자열
+        /// 저장 기록 전체. GameController가 Init 뒤에 GameData가 불러온 기록을 넣는다
         /// </summary>
-        public string NewestGrade => newestGrade;
+        public JsonSaveData GameSave
+        {
+            get => gameSave;
+            set => gameSave = value;
+        }
+
+        /// <summary>
+        /// 지금까지 가장 멀리 간 분기 id. 기록이 없으면 빈 문자열
+        /// </summary>
+        public string MaxGrade => gameSave.Progress.MaxGradeId;
+
+        /// <summary>
+        /// 마지막으로 도달한 분기 id. 기록이 없으면 빈 문자열
+        /// </summary>
+        public string NewestGrade => gameSave.Progress.NewestId;
 
         /// <summary>
         /// 최근에 들어간 Action(선택지·QTE) 분기 id. 기록이 없으면 빈 문자열
         /// </summary>
         /// <remarks>
-        /// 배드 엔딩은 선택에서 갈라지므로, 실패로 끝났을 때 이 분기로 되돌아간다.
-        /// 저장하지 않으므로 게임을 다시 켜면 빈 문자열로 시작한다
+        /// 배드 엔딩은 선택에서 갈라지므로, 실패로 끝났을 때 이 분기로 되돌아간다
         /// </remarks>
         public string CheckpointGrade
         {
-            get => checkpointGrade;
-            set => checkpointGrade = value;
+            get => gameSave.Progress.LastSelect;
+            set => gameSave.Progress.LastSelect = value;
         }
 
         /// <summary>
         /// 누적 실패 횟수
         /// </summary>
-        public int FailCount => failCount;
-
-        /// <summary>
-        /// 분기 안의 진행 단계. 저장하지 않는다
-        /// </summary>
-        public GamePhase GamePhase => gamePhase;
+        public int FailCount => gameSave.Progress.FallCount;
 
         #endregion
 
         #region ISetting
 
         /// <summary>
-        /// 저장된 기록을 불러온다
+        /// 기록은 GameController가 GameSave로 넣어 주므로 여기서 불러올 것이 없다
         /// </summary>
-        /// <remarks>
-        /// 키가 없으면 숫자는 0, 문자열은 빈 문자열이 나오므로 세이브가 없는 첫 실행도 그 값으로 시작한다
-        /// </remarks>
         public void Init()
         {
-            maxGrade = PlayerPrefs.GetString(MaxGradeKey);
-            newestGrade = PlayerPrefs.GetString(NewestGradeKey);
-            failCount = PlayerPrefs.GetInt(FailCountKey);
         }
 
         /// <summary>
@@ -92,14 +85,11 @@ namespace FMV
         #region Save
 
         /// <summary>
-        /// 현재 기록을 PlayerPrefs에 쓴다
+        /// 현재 기록을 save.json에 쓴다
         /// </summary>
         public void Save()
         {
-            PlayerPrefs.SetString(MaxGradeKey, maxGrade);
-            PlayerPrefs.SetString(NewestGradeKey, newestGrade);
-            PlayerPrefs.SetInt(FailCountKey, failCount);
-            PlayerPrefs.Save();
+            SaveFile.Save(gameSave);
         }
 
         #endregion
@@ -107,20 +97,28 @@ namespace FMV
         #region Progress
 
         /// <summary>
-        /// 현재 단계를 도달한 분기 id로 바꾸고, 바뀌기 전 단계는 이전 단계로 남긴다.
+        /// 현재 단계를 도달한 분기 id로 바꾸고, 방문한 분기로 기록한다.
         /// 최대 단계보다 앞선 단계면 최대 단계도 갱신한다
         /// </summary>
         /// <remarks>
-        /// 같은 단계 안의 갈래("2a", "2b")는 앞서고 뒤서는 관계가 없으므로, 먼저 기록된 쪽을 유지한다
+        /// 같은 단계 안의 갈래("2a", "2b")는 앞서고 뒤서는 관계가 없으므로, 먼저 기록된 쪽을 유지한다.
+        /// 빈 문자열은 엔딩 뒤 처음부터 시작하라는 뜻이라 방문 기록에 넣지 않는다
         /// </remarks>
         /// <param name="id"> 도달한 분기 id </param>
         public void UpdateGrade(string id)
         {
-            newestGrade = id;
+            JsonProgressInfo progress = gameSave.Progress;
 
-            if (ParseStage(id) > ParseStage(maxGrade))
+            progress.NewestId = id;
+
+            if (!string.IsNullOrEmpty(id) && !progress.Visited.Contains(id))
             {
-                maxGrade = id;
+                progress.Visited.Add(id);
+            }
+
+            if (ParseStage(id) > ParseStage(progress.MaxGradeId))
+            {
+                progress.MaxGradeId = id;
             }
         }
 
@@ -129,7 +127,7 @@ namespace FMV
         /// </summary>
         public void AddFail()
         {
-            ++failCount;
+            ++gameSave.Progress.FallCount;
         }
 
         #endregion

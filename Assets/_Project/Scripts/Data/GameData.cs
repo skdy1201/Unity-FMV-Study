@@ -4,7 +4,8 @@ using System.Collections.Generic;
 namespace FMV
 {
     /// <summary>
-    /// videos.json, nodes.json, endings.json을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다
+    /// videos.json, nodes.json, endings.json을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다.
+    /// save.json의 저장 기록도 불러온다
     /// </summary>
     [System.Serializable]
     public class GameData : ISetting
@@ -24,6 +25,7 @@ namespace FMV
         private Dictionary<string, JsonNodeInfo> nodeMapping = new Dictionary<string, JsonNodeInfo>();
         private Dictionary<string, JsonEndingInfo> endingMapping = new Dictionary<string, JsonEndingInfo>();
         private Graph cladoGraph;
+        private JsonSaveData gameSave;
 
         #endregion
 
@@ -33,6 +35,14 @@ namespace FMV
         /// Cladogram으로 만든 분기도. Init 이후에 사용할 수 있다
         /// </summary>
         public Graph Graph => cladoGraph;
+
+        /// <summary>
+        /// save.json에서 불러온 저장 기록. Init 이후에 사용할 수 있다
+        /// </summary>
+        /// <remarks>
+        /// GameController가 같은 객체를 GameState에 넘기고, 기록을 바꾸고 저장하는 일은 GameState가 맡는다
+        /// </remarks>
+        public JsonSaveData Save => gameSave;
 
         #endregion
 
@@ -67,6 +77,7 @@ namespace FMV
             ClipIdMapping();
             NodeInfoMapping();
             EndingInfoMapping();
+            gameSave = SaveFile.Load();
         }
 
         /// <summary>
