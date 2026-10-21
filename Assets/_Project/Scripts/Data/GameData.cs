@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FMV
 {
     /// <summary>
-    /// videos.json, nodes.json, endings.json을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다.
+    /// videos.json, nodes.json, endings.json, achievements.json을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보, 업적 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다.
     /// save.json의 저장 기록도 불러온다
     /// </summary>
     [System.Serializable]
@@ -15,6 +15,7 @@ namespace FMV
         [SerializeField] private TextAsset videoJson;
         [SerializeField] private TextAsset nodeJson;
         [SerializeField] private TextAsset endingJson;
+        [SerializeField] private TextAsset achievementJson;
         [SerializeField] private Cladogram cladogram;
 
         #endregion
@@ -24,6 +25,7 @@ namespace FMV
         private Dictionary<string, string> videoMapping = new Dictionary<string, string>();
         private Dictionary<string, JsonNodeInfo> nodeMapping = new Dictionary<string, JsonNodeInfo>();
         private Dictionary<string, JsonEndingInfo> endingMapping = new Dictionary<string, JsonEndingInfo>();
+        private Dictionary<string, JsonAchievementInfo> achievementMapping = new Dictionary<string, JsonAchievementInfo>();
         private Graph cladoGraph;
         private JsonSaveData gameSave;
 
@@ -77,6 +79,7 @@ namespace FMV
             ClipIdMapping();
             NodeInfoMapping();
             EndingInfoMapping();
+            AchievementInfoMapping();
             gameSave = SaveFile.Load();
         }
 
@@ -132,6 +135,22 @@ namespace FMV
             foreach (JsonEndingInfo ending in table.Endings)
             {
                 endingMapping[ending.ID] = ending;
+            }
+        }
+
+        /// <summary>
+        /// 업적 id를 키로, 업적 정보를 값으로 등록한다
+        /// </summary>
+        /// <remarks>
+        /// 같은 id가 여러 번 있으면 뒤에 나온 값으로 덮어쓴다
+        /// </remarks>
+        private void AchievementInfoMapping()
+        {
+            JsonAchievementTable table = JsonUtility.FromJson<JsonAchievementTable>(achievementJson.text);
+
+            foreach (JsonAchievementInfo achievement in table.Achievements)
+            {
+                achievementMapping[achievement.ID] = achievement;
             }
         }
 
