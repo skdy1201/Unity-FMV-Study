@@ -19,7 +19,7 @@ namespace FMV
         [SerializeField] private string title;
         [SerializeField] private string description;
         [SerializeField] private string icon;
-        [SerializeField] private int requiredFailCount;
+        [SerializeField] private int requiredFallCount;
         [SerializeField] private string[] requiredEndings;
 
         #endregion
@@ -55,7 +55,7 @@ namespace FMV
         /// <summary>
         /// 업적이 열리려면 필요한 누적 실패 횟수. 0이면 실패 조건 없음
         /// </summary>
-        public int RequiredFailCount => requiredFailCount;
+        public int RequiredFallCount => requiredFallCount;
 
         /// <summary>
         /// 업적이 열리려면 봐야 하는 엔딩 id 목록. endings.json의 id와 같은 값을 쓴다

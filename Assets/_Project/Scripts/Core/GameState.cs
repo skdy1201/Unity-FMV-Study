@@ -59,7 +59,7 @@ namespace FMV
         /// <summary>
         /// 누적 실패 횟수
         /// </summary>
-        public int FailCount => gameSave.Progress.FallCount;
+        public int FallCount => gameSave.Progress.FallCount;
 
         #endregion
 
@@ -125,7 +125,7 @@ namespace FMV
         /// <summary>
         /// 실패 횟수를 1 올린다
         /// </summary>
-        public void AddFail()
+        public void AddFall()
         {
             ++gameSave.Progress.FallCount;
         }
