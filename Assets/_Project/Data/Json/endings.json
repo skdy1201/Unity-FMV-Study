@@ -1,7 +1,6 @@
 {
   "endings": [
     { "id": "2a", "title": "처음으로", "description": "출발조차 하지 못하고 태초로 돌아간다", "isFinal": false },
-    { "id": "3a", "title": "위험한 예배당", "description": "QTE에 실패해 예배당으로 떨어진다", "isFinal": false },
     { "id": "4a", "title": "추락", "description": "탑 앞에서 물러선다", "isFinal": false },
     { "id": "5",  "title": "탑의 정상", "description": "탑에 올라 여정을 마친다", "isFinal": true }
   ]
