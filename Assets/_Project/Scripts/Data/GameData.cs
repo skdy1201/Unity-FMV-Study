@@ -79,8 +79,10 @@ namespace FMV
             ClipIdMapping();
             NodeInfoMapping();
             EndingInfoMapping();
-            AchievementInfoMapping();
+
+            // 업적 매핑이 열린 업적 목록을 보므로 기록을 먼저 불러온다
             gameSave = SaveFile.Load();
+            AchievementInfoMapping();
         }
 
         /// <summary>
@@ -139,10 +141,12 @@ namespace FMV
         }
 
         /// <summary>
-        /// 업적 id를 키로, 업적 정보를 값으로 등록한다
+        /// 업적 id를 키로, 업적 정보를 값으로 등록한다.
+        /// 조건 이름을 파싱하고, save.json에 열린 업적으로 남아 있으면 IsUnlocked를 켠다
         /// </summary>
         /// <remarks>
-        /// 같은 id가 여러 번 있으면 뒤에 나온 값으로 덮어쓴다
+        /// 같은 id가 여러 번 있으면 뒤에 나온 값으로 덮어쓴다.
+        /// gameSave를 보므로 SaveFile.Load 뒤에 불러야 한다
         /// </remarks>
         private void AchievementInfoMapping()
         {
@@ -151,6 +155,7 @@ namespace FMV
             foreach (JsonAchievementInfo achievement in table.Achievements)
             {
                 achievement.ParseConditions();
+                achievement.IsUnlocked = gameSave.UnlockedAchievements.Contains(achievement.ID);
                 achievementMapping[achievement.ID] = achievement;
             }
         }
