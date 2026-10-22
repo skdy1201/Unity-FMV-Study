@@ -44,15 +44,14 @@ namespace FMV
 
         private void Awake()
         {
+            LoadSave();
+
             interfaceList = new List<ISetting> { gameData, gameState, clipConnect };
 
             foreach (ISetting set in interfaceList)
             {
                 set.Init();
             }
-
-            // ISetting.Init은 인자를 받지 않으므로, GameData가 불러온 기록을 Init 뒤에 GameState로 넘긴다
-            gameState.GameSave = gameData.Save;
 
             videoPlayer.ClipEnd += ClipEnd;
             videoPlayer.OnActionReached += EnterAction;
@@ -77,6 +76,22 @@ namespace FMV
             {
                 set.End();
             }
+        }
+
+        #endregion
+
+        #region Save
+
+        /// <summary>
+        /// GameData가 save.json을 불러오게 하고, 같은 기록을 GameState에 넘긴다
+        /// </summary>
+        /// <remarks>
+        /// ISetting.Init은 인자를 받지 않고 GameData의 업적 매핑이 기록을 보므로, Init보다 먼저 부른다
+        /// </remarks>
+        private void LoadSave()
+        {
+            gameData.LoadSave();
+            gameState.GameSave = gameData.Save;
         }
 
         #endregion

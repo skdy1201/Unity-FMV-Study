@@ -26,7 +26,7 @@ namespace FMV
         public GamePhase GamePhase => gamePhase;
 
         /// <summary>
-        /// 저장 기록 전체. GameController가 Init 뒤에 GameData가 불러온 기록을 넣는다
+        /// 저장 기록 전체. GameController가 Init 전에 GameData가 불러온 기록을 넣는다
         /// </summary>
         public JsonSaveData GameSave
         {

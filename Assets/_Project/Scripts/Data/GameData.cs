@@ -7,6 +7,9 @@ namespace FMV
     /// videos.json, nodes.json, endings.json, achievements.json을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보, 업적 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다.
     /// save.json의 저장 기록도 불러온다
     /// </summary>
+    /// <remarks>
+    /// 업적 매핑이 저장 기록을 보므로, Init보다 LoadSave를 먼저 불러야 한다
+    /// </remarks>
     [System.Serializable]
     public class GameData : ISetting
     {
@@ -39,7 +42,7 @@ namespace FMV
         public Graph Graph => cladoGraph;
 
         /// <summary>
-        /// save.json에서 불러온 저장 기록. Init 이후에 사용할 수 있다
+        /// save.json에서 불러온 저장 기록. LoadSave 이후에 사용할 수 있다
         /// </summary>
         /// <remarks>
         /// GameController가 같은 객체를 GameState에 넘기고, 기록을 바꾸고 저장하는 일은 GameState가 맡는다
@@ -69,6 +72,21 @@ namespace FMV
 
         #endregion
 
+        #region Save
+
+        /// <summary>
+        /// save.json에서 저장 기록을 불러온다
+        /// </summary>
+        /// <remarks>
+        /// ISetting.Init보다 먼저 부른다. 기록을 바꾸고 저장하는 일은 GameState가 맡는다
+        /// </remarks>
+        public void LoadSave()
+        {
+            gameSave = SaveFile.Load();
+        }
+
+        #endregion
+
         #region Mapping
 
         /// <summary>
@@ -79,9 +97,6 @@ namespace FMV
             ClipIdMapping();
             NodeInfoMapping();
             EndingInfoMapping();
-
-            // 업적 매핑이 열린 업적 목록을 보므로 기록을 먼저 불러온다
-            gameSave = SaveFile.Load();
             AchievementInfoMapping();
         }
 
@@ -146,7 +161,7 @@ namespace FMV
         /// </summary>
         /// <remarks>
         /// 같은 id가 여러 번 있으면 뒤에 나온 값으로 덮어쓴다.
-        /// gameSave를 보므로 SaveFile.Load 뒤에 불러야 한다
+        /// gameSave를 보므로 LoadSave 뒤에 불러야 한다
         /// </remarks>
         private void AchievementInfoMapping()
         {
