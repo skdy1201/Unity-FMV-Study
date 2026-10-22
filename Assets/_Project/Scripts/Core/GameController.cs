@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Video;
 
 namespace FMV
@@ -16,15 +15,18 @@ namespace FMV
     {
         #region Serialized Fields
 
+        [Header("Parts")]
         [SerializeField] private GameData gameData = new GameData();
         [SerializeField] private ClipConnect clipConnect = new ClipConnect();
 
+        [Header("Scene References")]
         [SerializeField] private VideoPlayerScript videoPlayer;
+        [SerializeField] private ActionUIController actionUIController;
+
+        [Header("UI Prefabs")]
         [SerializeField] private GameObject mediaInteractUI;
-        [FormerlySerializedAs("actionUIPrefab")]
         [SerializeField] private GameObject selectUIPrefab;
         [SerializeField] private GameObject qteUIPrefab;
-        [SerializeField] private ActionUIController actionUIController;
 
         #endregion
 
