@@ -246,6 +246,9 @@ namespace FMV
                     gameState.UpdateGrade(gameState.CheckpointGrade);
                 }
 
+                // 업적 조건인 실패 횟수와 본 엔딩은 엔딩에서만 바뀌므로, 엔딩마다 새로 열린 업적을 찾는다
+                gameState.CheckAchievement(gameData.Achievements);
+
                 // 엔딩은 GameEntry를 다시 타지 않으므로, 씬을 바꾸기 전에 엔딩 뒤 기록을 저장한다
                 gameState.Save();
 

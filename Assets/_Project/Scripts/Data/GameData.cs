@@ -42,6 +42,14 @@ namespace FMV
         public Graph Graph => cladoGraph;
 
         /// <summary>
+        /// achievements.json에서 읽은 업적 목록. Init 이후에 사용할 수 있다
+        /// </summary>
+        /// <remarks>
+        /// 밖에서 업적을 더하거나 빼지 못하도록 foreach만 되는 IEnumerable로 내보낸다
+        /// </remarks>
+        public IEnumerable<JsonAchievementInfo> Achievements => achievementMapping.Values;
+
+        /// <summary>
         /// save.json에서 불러온 저장 기록. LoadSave 이후에 사용할 수 있다
         /// </summary>
         /// <remarks>
