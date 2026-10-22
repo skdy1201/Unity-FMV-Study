@@ -150,6 +150,7 @@ namespace FMV
 
             foreach (JsonAchievementInfo achievement in table.Achievements)
             {
+                achievement.ParseConditions();
                 achievementMapping[achievement.ID] = achievement;
             }
         }

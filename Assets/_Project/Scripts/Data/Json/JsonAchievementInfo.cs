@@ -8,7 +8,7 @@ namespace FMV
     /// </summary>
     /// <remarks>
     /// JsonUtility는 필드 이름으로 JSON 키를 찾으므로, 필드 이름을 바꾸면 JSON 키도 같이 바꿔야 한다.
-    /// 업적이 열렸는지는 저장하지 않고, 저장 기록과 이 조건을 비교해 매번 계산한다
+    /// 열린 업적은 save.json에 id로만 남기고, 실행 중 열림 여부는 IsUnlocked에 둔다
     /// </remarks>
     [System.Serializable]
     public class JsonAchievementInfo
@@ -19,6 +19,7 @@ namespace FMV
         [SerializeField] private string title;
         [SerializeField] private string description;
         [SerializeField] private string icon;
+        [SerializeField] private string[] conditions;
         [SerializeField] private int requiredFallCount;
         [SerializeField] private string[] requiredEndings;
 
@@ -27,6 +28,7 @@ namespace FMV
         #region Private Fields
 
         private bool isUnlocked;
+        private AchievementCondition conditionFlags = AchievementCondition.None;
 
         #endregion
 
@@ -63,6 +65,14 @@ namespace FMV
         public string[] RequiredEndings => requiredEndings;
 
         /// <summary>
+        /// 이 업적이 검사할 조건의 종류
+        /// </summary>
+        /// <remarks>
+        /// ParseConditions를 부르기 전에는 None이다
+        /// </remarks>
+        public AchievementCondition Conditions => conditionFlags;
+
+        /// <summary>
         /// 업적이 열렸으면 true
         /// </summary>
         /// <remarks>
@@ -73,6 +83,39 @@ namespace FMV
         {
             get => isUnlocked;
             set => isUnlocked = value;
+        }
+
+        #endregion
+
+        #region Conditions
+
+        /// <summary>
+        /// achievements.json의 조건 이름 목록을 AchievementCondition으로 바꿔 Conditions에 담는다
+        /// </summary>
+        /// <remarks>
+        /// JsonUtility는 enum을 숫자로만 읽어서, JSON에는 enum 이름을 문자열로 적고 여기서 바꾼다.
+        /// GameData가 업적을 매핑할 때 한 번 부른다. 모르는 이름은 경고만 남기고 건너뛴다
+        /// </remarks>
+        public void ParseConditions()
+        {
+            conditionFlags = AchievementCondition.None;
+
+            if (conditions == null)
+            {
+                return;
+            }
+
+            foreach (string name in conditions)
+            {
+                if (Enum.TryParse(name, out AchievementCondition condition))
+                {
+                    conditionFlags |= condition;
+                }
+                else
+                {
+                    Debug.LogWarning($"Unknown achievement condition: {name} ({id})");
+                }
+            }
         }
 
         #endregion

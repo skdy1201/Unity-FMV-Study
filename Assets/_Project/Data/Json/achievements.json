@@ -1,7 +1,7 @@
 {
   "achievements": [
-    { "id": "firstFall", "title": "첫 낙하", "description": "처음으로 떨어진다", "icon": "firstFall", "requiredFallCount": 1, "requiredEndings": [] },
-    { "id": "allFall",   "title": "전부 실패", "description": "모든 배드 엔딩을 본다", "icon": "allFall", "requiredFallCount": 0, "requiredEndings": ["2a", "4a"] },
-    { "id": "ending",    "title": "탑의 정상", "description": "탑에 올라 여정을 마친다", "icon": "ending", "requiredFallCount": 0, "requiredEndings": ["5"] }
+    { "id": "firstFall", "title": "첫 낙하", "description": "처음으로 떨어진다", "icon": "firstFall", "conditions": ["FallCount"], "requiredFallCount": 1, "requiredEndings": [] },
+    { "id": "allFall",   "title": "전부 실패", "description": "모든 배드 엔딩을 본다", "icon": "allFall", "conditions": ["Ending"], "requiredFallCount": 0, "requiredEndings": ["2a", "4a"] },
+    { "id": "ending",    "title": "탑의 정상", "description": "탑에 올라 여정을 마친다", "icon": "ending", "conditions": ["Ending"], "requiredFallCount": 0, "requiredEndings": ["5"] }
   ]
 }
