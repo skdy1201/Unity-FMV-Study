@@ -603,6 +603,10 @@ PrefabInstance:
       propertyPath: gameData.achievementJson
       value: 
       objectReference: {fileID: 4900000, guid: dabd83cc9dd9b7d4ab6da7cbd402e7a4, type: 3}
+    - target: {fileID: 329930262127566388, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
+      propertyPath: gameData.achievementTable
+      value: 
+      objectReference: {fileID: 11400000, guid: 04f7215e9daccf341bf2277abe6dad51, type: 2}
     - target: {fileID: 2809020022974706684, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.4738

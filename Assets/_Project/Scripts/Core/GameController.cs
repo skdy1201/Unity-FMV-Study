@@ -86,7 +86,7 @@ namespace FMV
         /// GameData가 save.json을 불러오게 하고, 같은 기록을 GameState에 넘긴다
         /// </summary>
         /// <remarks>
-        /// ISetting.Init은 인자를 받지 않고 GameData의 업적 매핑이 기록을 보므로, Init보다 먼저 부른다
+        /// 기록을 먼저 불러 둔 뒤 나머지 데이터를 맞추도록, Init보다 먼저 부른다
         /// </remarks>
         private void LoadSave()
         {

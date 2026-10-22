@@ -152,18 +152,17 @@ namespace FMV
 
         /// <summary>
         /// 아직 열리지 않은 업적의 조건을 저장 기록과 비교해, 새로 열린 업적을 찾는다.
-        /// 새로 열린 업적은 IsUnlocked를 켜고 열린 업적 목록에 넣은 뒤 OnAchievementUnlocked로 알린다
+        /// 새로 열린 업적은 열린 업적 목록에 넣은 뒤 OnAchievementUnlocked로 알린다
         /// </summary>
         /// <remarks>
-        /// 이전에 열린 업적의 IsUnlocked는 GameData가 매핑할 때 켜 둔다.
         /// 저장은 하지 않으므로, 호출한 쪽이 Save로 남긴다
         /// </remarks>
         /// <param name="achievements"> 검사할 업적 목록 </param>
-        public void CheckAchievement(IEnumerable<JsonAchievementInfo> achievements)
+        public void CheckAchievement(IReadOnlyList<AchievementDefinition> achievements)
         {
             List<string> unlocked = gameSave.UnlockedAchievements;
 
-            foreach (JsonAchievementInfo achievement in achievements)
+            foreach (AchievementDefinition achievement in achievements)
             {
                 // 이미 열린 업적은 새로 알릴 것이 없다
                 if (unlocked.Contains(achievement.ID))
@@ -176,7 +175,6 @@ namespace FMV
                     continue;
                 }
 
-                achievement.IsUnlocked = true;
                 unlocked.Add(achievement.ID);
 
                 LogAchievement(achievement);
@@ -188,7 +186,7 @@ namespace FMV
         /// <remarks>
         /// 업적이 가진 조건을 모두 만족해야 true. 조건이 하나도 없는 업적은 잘못 적힌 것으로 보고 열지 않는다
         /// </remarks>
-        private bool IsConditionMet(JsonAchievementInfo achievement)
+        private bool IsConditionMet(AchievementDefinition achievement)
         {
             AchievementCondition conditions = achievement.Conditions;
 
@@ -210,7 +208,7 @@ namespace FMV
             return true;
         }
 
-        private bool CheckFallCount(JsonAchievementInfo achievement)
+        private bool CheckFallCount(AchievementDefinition achievement)
         {
             return FallCount >= achievement.RequiredFallCount;
         }
@@ -218,7 +216,7 @@ namespace FMV
         /// <remarks>
         /// 엔딩 id는 분기 id와 같아서, 방문한 분기 목록으로 본 엔딩을 확인한다
         /// </remarks>
-        private bool CheckEndings(JsonAchievementInfo achievement)
+        private bool CheckEndings(AchievementDefinition achievement)
         {
             foreach (string endingId in achievement.RequiredEndings)
             {
@@ -234,7 +232,7 @@ namespace FMV
         /// <remarks>
         /// 달성 팝업 UI를 붙이기 전에 판정 결과를 콘솔로 확인하기 위한 임시 출력
         /// </remarks>
-        private void LogAchievement(JsonAchievementInfo achievement)
+        private void LogAchievement(AchievementDefinition achievement)
         {
             Debug.Log($"[Achievement] {achievement.Title}\n{achievement.Description}");
         }

@@ -4,12 +4,9 @@ using System.Collections.Generic;
 namespace FMV
 {
     /// <summary>
-    /// videos.json, nodes.json, endings.json, achievements.json을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보, 업적 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다.
+    /// videos.json, nodes.json, endings.json과 AchievementTable을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보, 업적 정의를 매핑하고, Cladogram으로 분기 Graph를 만든다.
     /// save.json의 저장 기록도 불러온다
     /// </summary>
-    /// <remarks>
-    /// 업적 매핑이 저장 기록을 보므로, Init보다 LoadSave를 먼저 불러야 한다
-    /// </remarks>
     [System.Serializable]
     public class GameData : ISetting
     {
@@ -18,7 +15,7 @@ namespace FMV
         [SerializeField] private TextAsset videoJson;
         [SerializeField] private TextAsset nodeJson;
         [SerializeField] private TextAsset endingJson;
-        [SerializeField] private TextAsset achievementJson;
+        [SerializeField] private AchievementTable achievementTable;
         [SerializeField] private Cladogram cladogram;
 
         #endregion
@@ -28,7 +25,7 @@ namespace FMV
         private Dictionary<string, string> videoMapping = new Dictionary<string, string>();
         private Dictionary<string, JsonNodeInfo> nodeMapping = new Dictionary<string, JsonNodeInfo>();
         private Dictionary<string, JsonEndingInfo> endingMapping = new Dictionary<string, JsonEndingInfo>();
-        private Dictionary<string, JsonAchievementInfo> achievementMapping = new Dictionary<string, JsonAchievementInfo>();
+        private readonly Dictionary<string, AchievementDefinition> achievementMapping = new Dictionary<string, AchievementDefinition>();
         private Graph cladoGraph;
         private JsonSaveData gameSave;
 
@@ -42,12 +39,12 @@ namespace FMV
         public Graph Graph => cladoGraph;
 
         /// <summary>
-        /// achievements.json에서 읽은 업적 목록. Init 이후에 사용할 수 있다
+        /// AchievementTable에 입력한 업적 정의 목록
         /// </summary>
         /// <remarks>
-        /// 밖에서 업적을 더하거나 빼지 못하도록 foreach만 되는 IEnumerable로 내보낸다
+        /// 에셋의 읽기 전용 목록을 그대로 내보낸다
         /// </remarks>
-        public IEnumerable<JsonAchievementInfo> Achievements => achievementMapping.Values;
+        public IReadOnlyList<AchievementDefinition> Achievements => achievementTable.Achievements;
 
         /// <summary>
         /// save.json에서 불러온 저장 기록. LoadSave 이후에 사용할 수 있다
@@ -164,21 +161,16 @@ namespace FMV
         }
 
         /// <summary>
-        /// 업적 id를 키로, 업적 정보를 값으로 등록한다.
-        /// 조건 이름을 파싱하고, save.json에 열린 업적으로 남아 있으면 IsUnlocked를 켠다
+        /// 업적 id를 키로, AchievementTable의 업적 정의를 값으로 등록한다
         /// </summary>
         /// <remarks>
         /// 같은 id가 여러 번 있으면 뒤에 나온 값으로 덮어쓴다.
-        /// gameSave를 보므로 LoadSave 뒤에 불러야 한다
+        /// 열림 여부는 save.json만 관리하므로 여기서는 정의만 담는다
         /// </remarks>
         private void AchievementInfoMapping()
         {
-            JsonAchievementTable table = JsonUtility.FromJson<JsonAchievementTable>(achievementJson.text);
-
-            foreach (JsonAchievementInfo achievement in table.Achievements)
+            foreach (AchievementDefinition achievement in achievementTable.Achievements)
             {
-                achievement.ParseConditions();
-                achievement.IsUnlocked = gameSave.UnlockedAchievements.Contains(achievement.ID);
                 achievementMapping[achievement.ID] = achievement;
             }
         }
@@ -231,12 +223,12 @@ namespace FMV
         }
 
         /// <summary>
-        /// 업적 id로 업적 정보를 찾는다
+        /// 업적 id로 업적 정의를 찾는다
         /// </summary>
         /// <param name="id"> 업적 id </param>
-        /// <param name="info"> 찾은 업적 정보. 없으면 null </param>
-        /// <returns> achievements.json에 있는 업적이면 true </returns>
-        public bool TryGetAchievementInfo(string id, out JsonAchievementInfo info)
+        /// <param name="info"> 찾은 업적 정의. 없으면 null </param>
+        /// <returns> AchievementTable에 있는 업적이면 true </returns>
+        public bool TryGetAchievementInfo(string id, out AchievementDefinition info)
         {
             return achievementMapping.TryGetValue(id, out info);
         }
