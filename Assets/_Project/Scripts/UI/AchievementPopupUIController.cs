@@ -9,7 +9,7 @@ namespace FMV
     /// 같은 오브젝트의 CanvasGroup으로 켜고 끈다. 표시할 업적 내용·연출은 다음 단계에서 붙인다
     /// </remarks>
     [RequireComponent(typeof(CanvasGroup))]
-    public class AchievementPopupUIController : MonoBehaviour, IShowHide
+    public class AchievementPopupUIController : MonoBehaviour, IUIVisible
     {
         #region Private Fields
 
@@ -29,7 +29,7 @@ namespace FMV
 
         #endregion
 
-        #region IShowHide
+        #region IUIVisible
 
         /// <summary>
         /// 팝업을 보인다

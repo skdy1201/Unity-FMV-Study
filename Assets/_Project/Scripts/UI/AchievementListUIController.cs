@@ -9,7 +9,7 @@ namespace FMV
     /// 같은 오브젝트의 CanvasGroup으로 켜고 끈다. 목록 내용 채우기는 다음 단계에서 붙인다
     /// </remarks>
     [RequireComponent(typeof(CanvasGroup))]
-    public class AchievementListUIController : MonoBehaviour, IShowHide
+    public class AchievementListUIController : MonoBehaviour, IUIVisible
     {
         #region Private Fields
 
@@ -29,7 +29,7 @@ namespace FMV
 
         #endregion
 
-        #region IShowHide
+        #region IUIVisible
 
         /// <summary>
         /// 조회 목록을 보이고 입력을 받게 한다
