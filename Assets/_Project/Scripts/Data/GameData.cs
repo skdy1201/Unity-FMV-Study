@@ -59,11 +59,11 @@ namespace FMV
         #region ISetting
 
         /// <summary>
-        /// JSON 매핑 테이블과 분기 Graph를 만든다
+        /// JSON과 AchievementTable로 매핑 테이블을 만들고 분기 Graph를 만든다
         /// </summary>
         public void Init()
         {
-            JsonMapping();
+            DataMapping();
 
             cladoGraph = new Graph(cladogram);
         }
@@ -95,9 +95,9 @@ namespace FMV
         #region Mapping
 
         /// <summary>
-        /// JSON 데이터를 읽어 매핑 테이블을 만든다
+        /// JSON 데이터와 AchievementTable을 읽어 매핑 테이블을 만든다
         /// </summary>
-        private void JsonMapping()
+        private void DataMapping()
         {
             ClipIdMapping();
             NodeInfoMapping();
