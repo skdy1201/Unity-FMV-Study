@@ -227,8 +227,7 @@ namespace FMV
                 }
                 else
                 {
-                    // TODO: 떨어지기(실패 횟수) 추가
-                    //gameState.AddFall();
+                    gameState.AddFall();
                     gameState.UpdateGrade(gameState.CheckpointGrade);
                 }
 
