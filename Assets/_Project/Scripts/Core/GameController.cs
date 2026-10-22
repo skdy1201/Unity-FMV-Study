@@ -23,6 +23,9 @@ namespace FMV
         [SerializeField] private VideoPlayerScript videoPlayer;
         [SerializeField] private ActionUIController actionUIController;
 
+        [Header("Prefabs")]
+        [SerializeField] private SaveController saveControllerPrefab;
+
         [Header("UI Prefabs")]
         [SerializeField] private GameObject mediaInteractUI;
         [SerializeField] private GameObject selectUIPrefab;
@@ -37,6 +40,7 @@ namespace FMV
         private GameState gameState = new GameState();
         private GameInput gameInput = new GameInput();
 
+        private SaveController saveController;
         private ButtonVisual mediaVisual;
         private List<ISetting> interfaceList;
 
@@ -46,7 +50,7 @@ namespace FMV
 
         private void Awake()
         {
-            LoadSave();
+            SpawnSaveController();
 
             interfaceList = new List<ISetting> { gameData, gameState, clipConnect };
 
@@ -85,15 +89,16 @@ namespace FMV
         #region Save
 
         /// <summary>
-        /// GameData가 save.json을 불러오게 하고, 같은 기록을 GameState에 넘긴다
+        /// SaveController 프리팹을 생성해 참조를 보관하고, 불러온 기록을 GameState에 넘긴다
         /// </summary>
         /// <remarks>
-        /// 기록을 먼저 불러 둔 뒤 나머지 데이터를 맞추도록, Init보다 먼저 부른다
+        /// Instantiate가 반환하기 전에 SaveController.Awake가 실행되어 save.json을 불러오므로,
+        /// 다른 파츠가 기록을 쓰기 전에 가장 먼저 부른다
         /// </remarks>
-        private void LoadSave()
+        private void SpawnSaveController()
         {
-            gameData.LoadSave();
-            gameState.GameSave = gameData.Save;
+            saveController = Instantiate(saveControllerPrefab);
+            gameState.GameSave = saveController.SaveData;
         }
 
         #endregion

@@ -10,7 +10,7 @@ namespace FMV
     /// </summary>
     /// <remarks>
     /// GameController가 소유하는 일반 클래스라 씬 오브젝트 없이 쓴다.
-    /// 기록은 GameData가 불러온 JsonSaveData와 같은 객체를 GameController가 넘겨주므로, 여기서 바꾼 값이 곧 저장될 값이다.
+    /// 기록은 SaveController가 불러온 JsonSaveData와 같은 객체를 GameController가 넘겨주므로, 여기서 바꾼 값이 곧 저장될 값이다.
     /// 단계는 분기 id("2a" 같은 값)로 들고 있어 Graph·GameData와 같은 값을 쓴다
     /// </remarks>
     public class GameState : ISetting
@@ -30,7 +30,7 @@ namespace FMV
         public GamePhase GamePhase => gamePhase;
 
         /// <summary>
-        /// 저장 기록 전체. GameController가 Init 전에 GameData가 불러온 기록을 넣는다
+        /// 저장 기록 전체. GameController가 Init 전에 SaveController가 불러온 기록을 넣는다
         /// </summary>
         public JsonSaveData GameSave
         {

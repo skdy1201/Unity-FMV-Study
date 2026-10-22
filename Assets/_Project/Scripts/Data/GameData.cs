@@ -4,8 +4,7 @@ using System.Collections.Generic;
 namespace FMV
 {
     /// <summary>
-    /// videos.json, nodes.json, endings.json과 AchievementTable을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보, 업적 정의를 매핑하고, Cladogram으로 분기 Graph를 만든다.
-    /// save.json의 저장 기록도 불러온다
+    /// videos.json, nodes.json, endings.json과 AchievementTable을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보, 업적 정의를 매핑하고, Cladogram으로 분기 Graph를 만든다
     /// </summary>
     [System.Serializable]
     public class GameData : ISetting
@@ -27,7 +26,6 @@ namespace FMV
         private Dictionary<string, JsonEndingInfo> endingMapping = new Dictionary<string, JsonEndingInfo>();
         private readonly Dictionary<string, AchievementDefinition> achievementMapping = new Dictionary<string, AchievementDefinition>();
         private Graph cladoGraph;
-        private JsonSaveData gameSave;
 
         #endregion
 
@@ -45,14 +43,6 @@ namespace FMV
         /// 에셋의 읽기 전용 목록을 그대로 내보낸다
         /// </remarks>
         public IReadOnlyList<AchievementDefinition> Achievements => achievementTable.Achievements;
-
-        /// <summary>
-        /// save.json에서 불러온 저장 기록. LoadSave 이후에 사용할 수 있다
-        /// </summary>
-        /// <remarks>
-        /// GameController가 같은 객체를 GameState에 넘기고, 기록을 바꾸고 저장하는 일은 GameState가 맡는다
-        /// </remarks>
-        public JsonSaveData Save => gameSave;
 
         #endregion
 
@@ -73,21 +63,6 @@ namespace FMV
         /// </summary>
         public void End()
         {
-        }
-
-        #endregion
-
-        #region Save
-
-        /// <summary>
-        /// save.json에서 저장 기록을 불러온다
-        /// </summary>
-        /// <remarks>
-        /// ISetting.Init보다 먼저 부른다. 기록을 바꾸고 저장하는 일은 GameState가 맡는다
-        /// </remarks>
-        public void LoadSave()
-        {
-            gameSave = SaveFile.Load();
         }
 
         #endregion
