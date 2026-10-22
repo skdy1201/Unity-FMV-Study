@@ -52,7 +52,7 @@ namespace FMV
         {
             SpawnSaveController();
 
-            interfaceList = new List<ISetting> { gameData, gameState, clipConnect };
+            interfaceList = new List<ISetting> { gameData, clipConnect };
 
             foreach (ISetting set in interfaceList)
             {

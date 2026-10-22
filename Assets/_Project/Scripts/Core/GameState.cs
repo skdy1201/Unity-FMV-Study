@@ -14,7 +14,7 @@ namespace FMV
     /// 기록은 SaveController가 불러온 JsonSaveData와 같은 객체를 GameController가 넘겨주므로, 여기서 바꾼 값이 곧 저장될 값이다.
     /// 단계는 분기 id("2a" 같은 값)로 들고 있어 Graph·GameData와 같은 값을 쓴다
     /// </remarks>
-    public class GameState : ISetting
+    public class GameState
     {
         #region Private Fields
 
@@ -77,24 +77,6 @@ namespace FMV
         /// 이미 열려 있던 업적은 다시 알리지 않는다. 달성 팝업 같은 UI가 구독한다
         /// </remarks>
         public event Action<string> OnAchievementUnlocked;
-
-        #endregion
-
-        #region ISetting
-
-        /// <summary>
-        /// 기록은 GameController가 GameSave로 넣어 주므로 여기서 불러올 것이 없다
-        /// </summary>
-        public void Init()
-        {
-        }
-
-        /// <summary>
-        /// 저장은 SaveController가 맡아 정리할 것이 없어 비워 둔다
-        /// </summary>
-        public void End()
-        {
-        }
 
         #endregion
 
