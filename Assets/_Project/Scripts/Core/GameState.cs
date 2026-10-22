@@ -5,7 +5,8 @@ using UnityEngine;
 namespace FMV
 {
     /// <summary>
-    /// 현재 단계, 최대 단계, 실패 횟수 같은 진행 기록을 save.json 데이터로 읽고 바꾸며, SaveFile로 저장한다.
+    /// 현재 단계, 최대 단계, 실패 횟수 같은 진행 기록을 save.json 데이터로 읽고 바꾼다.
+    /// 저장은 같은 객체를 들고 있는 SaveController가 맡는다.
     /// 분기 안의 진행 단계는 저장하지 않는 GamePhase로 따로 갖고 있다
     /// </summary>
     /// <remarks>
@@ -89,23 +90,10 @@ namespace FMV
         }
 
         /// <summary>
-        /// 게임이 끝날 때 호출해 기록을 저장한다
+        /// 저장은 SaveController가 맡아 정리할 것이 없어 비워 둔다
         /// </summary>
         public void End()
         {
-            Save();
-        }
-
-        #endregion
-
-        #region Save
-
-        /// <summary>
-        /// 현재 기록을 save.json에 쓴다
-        /// </summary>
-        public void Save()
-        {
-            SaveFile.Save(gameSave);
         }
 
         #endregion

@@ -82,6 +82,8 @@ namespace FMV
             {
                 set.End();
             }
+
+            saveController.Save();
         }
 
         #endregion
@@ -148,7 +150,7 @@ namespace FMV
             }
 
             // 분기에 들어갈 때마다 저장해, 중간에 꺼져도 이 분기부터 다시 시작한다
-            gameState.Save();
+            saveController.Save();
         }
 
         /// <summary>
@@ -257,7 +259,7 @@ namespace FMV
                 gameState.CheckAchievement(gameData.Achievements);
 
                 // 엔딩은 GameEntry를 다시 타지 않으므로, 씬을 바꾸기 전에 엔딩 뒤 기록을 저장한다
-                gameState.Save();
+                saveController.Save();
 
                 SceneChange.ChangeScene("TitleScene");
 
