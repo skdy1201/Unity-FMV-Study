@@ -4,7 +4,7 @@ using UnityEngine;
 namespace FMV
 {
     /// <summary>
-    /// 업적 정의 전체. achievements.json을 대신한다
+    /// 업적 정의 전체. 인스펙터에서 입력한다
     /// </summary>
     /// <remarks>
     /// 정의는 바뀌지 않으므로 여러 씬이 같은 에셋을 참조해도 된다.
