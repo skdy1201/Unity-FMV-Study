@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace FMV
 {
     /// <summary>
@@ -60,6 +63,18 @@ namespace FMV
         /// 누적 실패 횟수
         /// </summary>
         public int FallCount => gameSave.Progress.FallCount;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// 업적이 새로 열렸을 때 업적 id를 넘겨 알린다
+        /// </summary>
+        /// <remarks>
+        /// 이미 열려 있던 업적은 다시 알리지 않는다. 달성 팝업 같은 UI가 구독한다
+        /// </remarks>
+        public event Action<string> OnAchievementUnlocked;
 
         #endregion
 
@@ -128,6 +143,89 @@ namespace FMV
         public void AddFall()
         {
             ++gameSave.Progress.FallCount;
+        }
+
+        #endregion
+
+        #region Achievement
+
+        /// <summary>
+        /// 아직 열리지 않은 업적의 조건을 저장 기록과 비교해, 새로 열린 업적을 찾는다.
+        /// 새로 열린 업적은 IsUnlocked를 켜고 열린 업적 목록에 넣은 뒤 OnAchievementUnlocked로 알린다
+        /// </summary>
+        /// <remarks>
+        /// 이전에 열린 업적의 IsUnlocked는 GameData가 매핑할 때 켜 둔다.
+        /// 저장은 하지 않으므로, 호출한 쪽이 Save로 남긴다
+        /// </remarks>
+        /// <param name="achievements"> 검사할 업적 목록 </param>
+        public void CheckAchievement(IEnumerable<JsonAchievementInfo> achievements)
+        {
+            List<string> unlocked = gameSave.UnlockedAchievements;
+
+            foreach (JsonAchievementInfo achievement in achievements)
+            {
+                // 이미 열린 업적은 새로 알릴 것이 없다
+                if (unlocked.Contains(achievement.ID))
+                {
+                    continue;
+                }
+
+                if (!IsConditionMet(achievement))
+                {
+                    continue;
+                }
+
+                achievement.IsUnlocked = true;
+                unlocked.Add(achievement.ID);
+
+                OnAchievementUnlocked?.Invoke(achievement.ID);
+            }
+        }
+
+        /// <remarks>
+        /// 업적이 가진 조건을 모두 만족해야 true. 조건이 하나도 없는 업적은 잘못 적힌 것으로 보고 열지 않는다
+        /// </remarks>
+        private bool IsConditionMet(JsonAchievementInfo achievement)
+        {
+            AchievementCondition conditions = achievement.Conditions;
+
+            if (conditions == AchievementCondition.None)
+            {
+                return false;
+            }
+
+            if (conditions.HasFlag(AchievementCondition.FallCount) && !CheckFallCount(achievement))
+            {
+                return false;
+            }
+
+            if (conditions.HasFlag(AchievementCondition.Ending) && !CheckEndings(achievement))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool CheckFallCount(JsonAchievementInfo achievement)
+        {
+            return FallCount >= achievement.RequiredFallCount;
+        }
+
+        /// <remarks>
+        /// 엔딩 id는 분기 id와 같아서, 방문한 분기 목록으로 본 엔딩을 확인한다
+        /// </remarks>
+        private bool CheckEndings(JsonAchievementInfo achievement)
+        {
+            foreach (string endingId in achievement.RequiredEndings)
+            {
+                if (!gameSave.Progress.Visited.Contains(endingId))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         #endregion
