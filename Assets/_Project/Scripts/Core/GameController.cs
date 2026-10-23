@@ -45,6 +45,10 @@ namespace FMV
 
         private SaveController saveController;
         private AchievementPopupUIController achievementPopupUI;
+
+        // 이번 씬에서 들어간 엔딩. 엔딩에 들어가면 NewestGrade가 엔딩 뒤 시작 위치로 바뀌므로, 엔딩 영상이 끝났는지는 이 값으로 안다.
+        // 엔딩 뒤에는 씬이 바뀌므로 한 번 들어가면 비우지 않는다
+        private JsonEndingInfo currentEnding;
         private ButtonVisual mediaVisual;
         private List<ISetting> interfaceList;
 
@@ -154,8 +158,40 @@ namespace FMV
                 videoPlayer.WaitActionTime(info.Timing.ActionStart);
             }
 
+            if (gameData.TryGetEndingInfo(currentId, out JsonEndingInfo ending))
+            {
+                EnterEnding(ending);
+            }
+
             // 분기에 들어갈 때마다 저장해, 중간에 꺼져도 이 분기부터 다시 시작한다
             saveController.Save();
+        }
+
+        /// <summary>
+        /// 엔딩 분기에 들어가면 엔딩을 본 것으로 보고, 실패 횟수·다음 시작 위치를 바꾼 뒤 새로 열린 업적 팝업을 띄운다
+        /// </summary>
+        /// <remarks>
+        /// 엔딩 영상이 끝날 때까지 미루면 팝업이 영상 뒤에 떠서 기다려야 하므로, 들어가는 순간 처리한다.
+        /// 다음 시작 위치도 여기서 엔딩 뒤 위치로 바꿔, 엔딩 영상 도중에 꺼도 엔딩을 다시 보거나 실패 횟수가 두 번 오르지 않는다
+        /// </remarks>
+        /// <param name="ending"> 들어간 엔딩 정보 </param>
+        private void EnterEnding(JsonEndingInfo ending)
+        {
+            currentEnding = ending;
+
+            if (ending.IsFinal)
+            {
+                // 빈 문자열이면 다음 실행 때 GameEntry가 시작 분기부터 진행한다
+                gameState.UpdateGrade(string.Empty);
+            }
+            else
+            {
+                gameState.AddFall();
+                gameState.UpdateGrade(gameState.CheckpointGrade);
+            }
+
+            // 업적 조건인 실패 횟수와 본 엔딩은 엔딩에 들어갈 때 바뀌므로, 바뀐 뒤에 새로 열린 업적을 찾는다
+            StartCoroutine(ShowNewAchievements());
         }
 
         /// <summary>
@@ -238,27 +274,22 @@ namespace FMV
 
         private void ClipEnd(NodeResult result)
         {
+            // 엔딩 기록은 들어갈 때 이미 바꿨으므로, 영상이 끝나면 메인 메뉴로 넘어가기만 한다
+            if (currentEnding != null)
+            {
+                StartCoroutine(PlayEnding());
+
+                return;
+            }
+
+            // 엔딩은 위에서 빠져나가므로, 여기까지 오면 NewestGrade는 지금 재생이 끝난 일반 분기다
             string currentId = gameState.NewestGrade;
             string nextId = gameData.Graph.GetNext(currentId, result)?.ID;
 
             if (nextId == null)
             {
-                // TODO: QTE(3) UI가 없어 4·5 쪽에 가지 못하므로, 4a·5 엔딩 흐름은 QTE를 만든 뒤 확인한다
-                if (!gameData.TryGetEndingInfo(currentId, out JsonEndingInfo ending))
-                {
-                    // 막다른 분기는 모두 endings.json에 있어야 한다
-                    Debug.LogError($"Ending info not found: {currentId}");
-                }
-                else if (ending.IsFinal)
-                {
-                    // 빈 문자열이면 다음 실행 때 GameEntry가 시작 분기부터 진행한다
-                    gameState.UpdateGrade(string.Empty);
-                }
-                else
-                {
-                    gameState.AddFall();
-                    gameState.UpdateGrade(gameState.CheckpointGrade);
-                }
+                // 일반 분기는 다음 분기가 있어야 한다. 없으면 막다른 분기가 endings.json에 빠진 데이터 오류다
+                Debug.LogError($"Ending info not found: {currentId}");
 
                 StartCoroutine(PlayEnding());
 
@@ -271,17 +302,13 @@ namespace FMV
         }
 
         /// <summary>
-        /// 새로 열린 업적 팝업을 띄우고, 떠 있는 팝업이 모두 끝나면 메인 메뉴로 넘어간다
+        /// 엔딩 영상이 끝나면, 떠 있는 업적 팝업이 모두 끝날 때까지 기다린 뒤 메인 메뉴로 넘어간다
         /// </summary>
         /// <remarks>
-        /// 판정·저장·씬 전환이 한 프레임에 이어지면 팝업이 씬과 함께 사라지므로, 팝업이 끝날 때까지 기다린 뒤 씬을 바꾼다.
-        /// 엔딩 전에 띄운 팝업이 아직 떠 있을 수 있어, 이번에 띄운 것만이 아니라 떠 있는 팝업 전체를 기다린다
+        /// 씬을 바꾸면 팝업도 함께 사라지므로, 엔딩 영상이 팝업보다 짧을 때를 위해 기다린다
         /// </remarks>
         private IEnumerator PlayEnding()
         {
-            // 업적 조건인 실패 횟수와 본 엔딩은 엔딩에서 바뀌므로, 엔딩마다 새로 열린 업적을 찾는다
-            yield return ShowNewAchievements();
-
             yield return new WaitUntil(() => !achievementPopupUI.IsPlaying);
 
             SceneChange.ChangeScene("MainMenuScene");
