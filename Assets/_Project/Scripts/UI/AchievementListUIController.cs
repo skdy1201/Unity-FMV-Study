@@ -1,16 +1,26 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FMV
 {
     /// <summary>
-    /// 업적 조회 목록 UI를 보이고 숨긴다
+    /// 업적 조회 목록 UI를 보이고 숨기고, 슬롯마다 업적 아이콘이나 잠금 이미지를 띄운다
     /// </summary>
     /// <remarks>
-    /// 같은 오브젝트의 CanvasGroup으로 켜고 끈다. 목록 내용 채우기는 다음 단계에서 붙인다
+    /// 같은 오브젝트의 CanvasGroup으로 켜고 끈다.
+    /// 슬롯은 AchievementTable에 입력한 업적 순서와 같은 순서로 Inspector에서 넣는다
     /// </remarks>
     [RequireComponent(typeof(CanvasGroup))]
     public class AchievementListUIController : MonoBehaviour, IUIVisible
     {
+        #region Serialized Fields
+
+        [SerializeField] private List<Image> slotImages = new List<Image>();
+        [SerializeField] private Sprite lockedSprite;
+
+        #endregion
+
         #region Private Fields
 
         private CanvasGroup group;
@@ -45,6 +55,33 @@ namespace FMV
         public void Hide()
         {
             SetGroupVisible(false);
+        }
+
+        #endregion
+
+        #region Achievement
+
+        /// <summary>
+        /// 업적 정의를 순서대로 돌며, 열린 업적은 아이콘을, 잠긴 업적은 잠금 이미지를 슬롯에 띄운다
+        /// </summary>
+        /// <param name="achievements"> AchievementTable의 업적 정의 목록 </param>
+        /// <param name="unlockedIds"> save.json의 열린 업적 id 목록 </param>
+        public void SetAchievements(IReadOnlyList<AchievementDefinition> achievements, List<string> unlockedIds)
+        {
+            for (int i = 0; i < achievements.Count; ++i)
+            {
+                // 슬롯보다 업적이 많으면 남은 업적은 띄울 자리가 없다
+                if (i >= slotImages.Count)
+                {
+                    Debug.LogError($"Not enough achievement slots: {slotImages.Count} < {achievements.Count}");
+                    return;
+                }
+
+                AchievementDefinition achievement = achievements[i];
+                bool isUnlocked = unlockedIds.Contains(achievement.ID);
+
+                slotImages[i].sprite = isUnlocked ? achievement.Icon : lockedSprite;
+            }
         }
 
         #endregion
