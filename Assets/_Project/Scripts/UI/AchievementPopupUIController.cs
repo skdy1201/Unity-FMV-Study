@@ -107,6 +107,7 @@ namespace FMV
         }
 
         /// <remarks>
+        /// 앞 절반·뒤 절반 모두 위쪽에서 느려지는 이징을 걸어, 빠르게 올라가 위에 오래 머물다 빠르게 내려온다.
         /// 매 프레임 이동량을 더하지 않고 지난 시간 비율로 위치를 정해, 프레임이 튀어도 끝에서 정확히 제자리로 돌아온다
         /// </remarks>
         private IEnumerator PlayPopup(Image slot, int stackIndex)
@@ -126,7 +127,7 @@ namespace FMV
 
                 // 앞 절반은 0 → 1로 올라가고, 뒤 절반은 1 → 0으로 내려온다
                 float ratio = (time < half) ? (time / half) : ((popupDuration - time) / half);
-                rect.anchoredPosition = hiddenPosition + Vector2.up * (riseHeight * Mathf.Clamp01(ratio));
+                rect.anchoredPosition = hiddenPosition + Vector2.up * (riseHeight * EaseOutQuint(ratio));
             }
 
             Destroy(slot.gameObject);
@@ -153,6 +154,16 @@ namespace FMV
             group.blocksRaycasts = visible;
         }
 
+        /// <remarks>
+        /// 0~1 비율을 처음에 빠르고 1에 가까울수록 느리게 바꾼다 (easeOutQuint: 1 - (1 - t)^5).
+        /// Mathf에는 없어 직접 둔다. 범위를 벗어난 값은 0~1로 자른다
+        /// </remarks>
+        private static float EaseOutQuint(float t)
+        {
+            float remain = 1f - Mathf.Clamp01(t);
+
+            return 1f - remain * remain * remain * remain * remain;
+        }
 
         #endregion
     }
