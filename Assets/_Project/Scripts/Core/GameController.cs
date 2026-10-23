@@ -261,7 +261,7 @@ namespace FMV
                 // 엔딩은 GameEntry를 다시 타지 않으므로, 씬을 바꾸기 전에 엔딩 뒤 기록을 저장한다
                 saveController.Save();
 
-                SceneChange.ChangeScene("TitleScene");
+                SceneChange.ChangeScene("MainMenuScene");
 
                 return;
             }
