@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4746482774901508487}
-  - component: {fileID: 7424563816959532525}
+  - component: {fileID: -2368692444164777006}
   m_Layer: 0
-  m_Name: SceneController
+  m_Name: MainMenuController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7424563816959532525
+--- !u!114 &-2368692444164777006
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,9 +41,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8759938736189187011}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35ad5730cabf02840af43e8a0d896131, type: 3}
+  m_Script: {fileID: 11500000, guid: 20e25f91d0c5c5c4db06d34f01331bdc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
-  fadeImage: {fileID: 0}
-  fadeDuration: 1.5
-  eventSystem: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::FMV.MainMenuController
+  saveControllerPrefab: {fileID: 8308831066501982915, guid: 1d8b1e5d061972947889a1f5e5185966, type: 3}
+  titleUIPrefab: {fileID: 9136082190431862445, guid: c0701ba9b59e9d6419c6e87a654b9117, type: 3}
+  achievementListUIPrefab: {fileID: 1290593919785546459, guid: 7b051aebc2c9f604e99678a2b31a5716, type: 3}
