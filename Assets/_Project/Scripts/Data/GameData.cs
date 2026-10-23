@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace FMV
 {
     /// <summary>
-    /// videos.json, nodes.json, endings.json과 AchievementTable을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보, 업적 정의를 매핑하고, Cladogram으로 분기 Graph를 만든다
+    /// videos.json, nodes.json, endings.json을 읽어 영상 id별 VideoClip 이름, Action 정보, 엔딩 정보를 매핑하고, Cladogram으로 분기 Graph를 만든다
     /// </summary>
     [System.Serializable]
     public class GameData : ISetting
@@ -14,7 +14,6 @@ namespace FMV
         [SerializeField] private TextAsset videoJson;
         [SerializeField] private TextAsset nodeJson;
         [SerializeField] private TextAsset endingJson;
-        [SerializeField] private AchievementTable achievementTable;
         [SerializeField] private Cladogram cladogram;
 
         #endregion
@@ -24,7 +23,6 @@ namespace FMV
         private Dictionary<string, string> videoMapping = new Dictionary<string, string>();
         private Dictionary<string, JsonNodeInfo> nodeMapping = new Dictionary<string, JsonNodeInfo>();
         private Dictionary<string, JsonEndingInfo> endingMapping = new Dictionary<string, JsonEndingInfo>();
-        private readonly Dictionary<string, AchievementDefinition> achievementMapping = new Dictionary<string, AchievementDefinition>();
         private Graph cladoGraph;
 
         #endregion
@@ -36,20 +34,12 @@ namespace FMV
         /// </summary>
         public Graph Graph => cladoGraph;
 
-        /// <summary>
-        /// AchievementTable에 입력한 업적 정의 목록
-        /// </summary>
-        /// <remarks>
-        /// 에셋의 읽기 전용 목록을 그대로 내보낸다
-        /// </remarks>
-        public IReadOnlyList<AchievementDefinition> Achievements => achievementTable.Achievements;
-
         #endregion
 
         #region ISetting
 
         /// <summary>
-        /// JSON과 AchievementTable로 매핑 테이블을 만들고 분기 Graph를 만든다
+        /// JSON으로 매핑 테이블을 만들고 분기 Graph를 만든다
         /// </summary>
         public void Init()
         {
@@ -70,14 +60,13 @@ namespace FMV
         #region Mapping
 
         /// <summary>
-        /// JSON 데이터와 AchievementTable을 읽어 매핑 테이블을 만든다
+        /// JSON 데이터를 읽어 매핑 테이블을 만든다
         /// </summary>
         private void DataMapping()
         {
             ClipIdMapping();
             NodeInfoMapping();
             EndingInfoMapping();
-            AchievementInfoMapping();
         }
 
         /// <summary>
@@ -135,21 +124,6 @@ namespace FMV
             }
         }
 
-        /// <summary>
-        /// 업적 id를 키로, AchievementTable의 업적 정의를 값으로 등록한다
-        /// </summary>
-        /// <remarks>
-        /// 같은 id가 여러 번 있으면 뒤에 나온 값으로 덮어쓴다.
-        /// 열림 여부는 save.json만 관리하므로 여기서는 정의만 담는다
-        /// </remarks>
-        private void AchievementInfoMapping()
-        {
-            foreach (AchievementDefinition achievement in achievementTable.Achievements)
-            {
-                achievementMapping[achievement.ID] = achievement;
-            }
-        }
-
         #endregion
 
         #region Lookup
@@ -195,17 +169,6 @@ namespace FMV
         public bool TryGetEndingInfo(string id, out JsonEndingInfo info)
         {
             return endingMapping.TryGetValue(id, out info);
-        }
-
-        /// <summary>
-        /// 업적 id로 업적 정의를 찾는다
-        /// </summary>
-        /// <param name="id"> 업적 id </param>
-        /// <param name="info"> 찾은 업적 정의. 없으면 null </param>
-        /// <returns> AchievementTable에 있는 업적이면 true </returns>
-        public bool TryGetAchievementInfo(string id, out AchievementDefinition info)
-        {
-            return achievementMapping.TryGetValue(id, out info);
         }
 
         #endregion

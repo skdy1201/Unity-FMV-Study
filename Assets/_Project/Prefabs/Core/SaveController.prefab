@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afcdb54a372ff0b46a841b7614f87ff6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FMV.SaveController
+  achievementTable: {fileID: 11400000, guid: 04f7215e9daccf341bf2277abe6dad51, type: 2}
