@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
@@ -30,17 +31,20 @@ namespace FMV
         [SerializeField] private GameObject mediaInteractUI;
         [SerializeField] private GameObject selectUIPrefab;
         [SerializeField] private GameObject qteUIPrefab;
+        [SerializeField] private AchievementPopupUIController achievementPopupUIPrefab;
 
         #endregion
 
         #region Private Fields
 
         private const float DefaultActionSpeed = 0.5f;
+        private const float PopupInterval = 0.2f;
 
         private GameState gameState = new GameState();
         private GameInput gameInput = new GameInput();
 
         private SaveController saveController;
+        private AchievementPopupUIController achievementPopupUI;
         private ButtonVisual mediaVisual;
         private List<ISetting> interfaceList;
 
@@ -64,6 +68,7 @@ namespace FMV
 
             ConnectMediaButton();
             ConnectActionUIController();
+            SpawnAchievementPopupUI();
         }
 
         private void Start()
@@ -255,13 +260,7 @@ namespace FMV
                     gameState.UpdateGrade(gameState.CheckpointGrade);
                 }
 
-                // 업적 조건인 실패 횟수와 본 엔딩은 엔딩에서만 바뀌므로, 엔딩마다 새로 열린 업적을 찾는다
-                saveController.CheckAchievement();
-
-                // 엔딩은 GameEntry를 다시 타지 않으므로, 씬을 바꾸기 전에 엔딩 뒤 기록을 저장한다
-                saveController.Save();
-
-                SceneChange.ChangeScene("MainMenuScene");
+                StartCoroutine(PlayEnding());
 
                 return;
             }
@@ -269,6 +268,50 @@ namespace FMV
             gameState.UpdateGrade(nextId);
 
             GameEntry();
+        }
+
+        /// <summary>
+        /// 새로 열린 업적 팝업을 띄우고, 떠 있는 팝업이 모두 끝나면 메인 메뉴로 넘어간다
+        /// </summary>
+        /// <remarks>
+        /// 판정·저장·씬 전환이 한 프레임에 이어지면 팝업이 씬과 함께 사라지므로, 팝업이 끝날 때까지 기다린 뒤 씬을 바꾼다.
+        /// 엔딩 전에 띄운 팝업이 아직 떠 있을 수 있어, 이번에 띄운 것만이 아니라 떠 있는 팝업 전체를 기다린다
+        /// </remarks>
+        private IEnumerator PlayEnding()
+        {
+            // 업적 조건인 실패 횟수와 본 엔딩은 엔딩에서 바뀌므로, 엔딩마다 새로 열린 업적을 찾는다
+            yield return ShowNewAchievements();
+
+            yield return new WaitUntil(() => !achievementPopupUI.IsPlaying);
+
+            SceneChange.ChangeScene("MainMenuScene");
+        }
+
+        #endregion
+
+        #region Achievement
+
+        /// <summary>
+        /// 새로 열린 업적을 찾아 저장하고, 간격을 두고 팝업을 겹쳐 띄운다
+        /// </summary>
+        /// <remarks>
+        /// 팝업을 띄우기만 하고 끝날 때까지 기다리지 않는다. 같은 씬 안에서는 분기가 바뀌어도 팝업이 남으므로,
+        /// 게임 도중에는 StartCoroutine으로 시작만 하고, 씬을 바꿀 때만 IsPlaying으로 기다린다.
+        /// 하나씩 끝날 때마다 다음을 띄우면 업적 수만큼 기다림이 길어지므로, 앞 팝업이 끝나기 전에 다음을 띄운다
+        /// </remarks>
+        private IEnumerator ShowNewAchievements()
+        {
+            List<AchievementDefinition> unlocked = saveController.CheckAchievement();
+
+            // 열린 업적 목록이 바뀌었으므로, 팝업 도중 꺼져도 남도록 팝업보다 먼저 저장한다
+            saveController.Save();
+
+            foreach (AchievementDefinition achievement in unlocked)
+            {
+                achievementPopupUI.Popup(achievement.Icon);
+
+                yield return new WaitForSeconds(PopupInterval);
+            }
         }
 
         #endregion
@@ -312,6 +355,17 @@ namespace FMV
             actionUIController.SetQTEUI(qteUI);
             actionUIController.OnQTEChecked += QTEChecked;
             actionUIController.OnQTETimeOut += QTETimeOut;
+        }
+
+        /// <summary>
+        /// 업적 팝업 UI 프리팹을 생성해 참조를 보관한다
+        /// </summary>
+        /// <remarks>
+        /// 생성될 때 팝업이 스스로 숨겨지므로, 엔딩에서 Popup을 부르기 전까지는 보이지 않는다
+        /// </remarks>
+        private void SpawnAchievementPopupUI()
+        {
+            achievementPopupUI = Instantiate(achievementPopupUIPrefab);
         }
 
         #endregion
