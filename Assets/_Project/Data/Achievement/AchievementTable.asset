@@ -16,14 +16,14 @@ MonoBehaviour:
   - id: firstFall
     title: "\uCCAB \uB099\uD558"
     description: "\uCC98\uC74C\uC73C\uB85C \uB5A8\uC5B4\uC9C4\uB2E4"
-    icon: {fileID: 0}
+    icon: {fileID: 6465939781391803981, guid: 4573ea06b53e4de4da9ef521d55001d9, type: 3}
     conditions: 1
     requiredFallCount: 1
     requiredEndings: []
   - id: allFall
     title: "\uC804\uBD80 \uC2E4\uD328"
     description: "\uBAA8\uB4E0 \uBC30\uB4DC \uC5D4\uB529\uC744 \uBCF8\uB2E4"
-    icon: {fileID: 0}
+    icon: {fileID: 4627618539742528958, guid: 4573ea06b53e4de4da9ef521d55001d9, type: 3}
     conditions: 2
     requiredFallCount: 0
     requiredEndings:
@@ -32,7 +32,7 @@ MonoBehaviour:
   - id: ending
     title: "\uD0D1\uC758 \uC815\uC0C1"
     description: "\uD0D1\uC5D0 \uC62C\uB77C \uC5EC\uC815\uC744 \uB9C8\uCE5C\uB2E4"
-    icon: {fileID: 0}
+    icon: {fileID: 5285573455164260679, guid: 4573ea06b53e4de4da9ef521d55001d9, type: 3}
     conditions: 2
     requiredFallCount: 0
     requiredEndings:
