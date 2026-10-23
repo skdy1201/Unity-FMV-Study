@@ -13,6 +13,7 @@ namespace FMV
         Exit = 1,
         MediaPlay = 2,
         Select = 3,
+        MainMenuInteract = 4,
     }
 
     /// <summary>
