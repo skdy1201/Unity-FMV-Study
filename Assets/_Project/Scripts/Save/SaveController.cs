@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,18 +46,6 @@ namespace FMV
 
         #endregion
 
-        #region Events
-
-        /// <summary>
-        /// 업적이 새로 열렸을 때 업적 id를 넘겨 알린다
-        /// </summary>
-        /// <remarks>
-        /// 이미 열려 있던 업적은 다시 알리지 않는다. 달성 팝업 같은 UI가 구독한다
-        /// </remarks>
-        public event Action<string> OnAchievementUnlocked;
-
-        #endregion
-
         #region Unity Lifecycle
 
         private void Awake()
@@ -95,14 +82,17 @@ namespace FMV
 
         /// <summary>
         /// 아직 열리지 않은 업적의 조건을 저장 기록과 비교해, 새로 열린 업적을 찾는다.
-        /// 새로 열린 업적은 열린 업적 목록에 넣은 뒤 OnAchievementUnlocked로 알린다
+        /// 새로 열린 업적은 열린 업적 목록에 넣고, 호출한 쪽에 돌려준다
         /// </summary>
         /// <remarks>
-        /// 저장은 하지 않으므로, 호출한 쪽이 Save로 남긴다
+        /// 저장은 하지 않으므로, 호출한 쪽이 Save로 남긴다.
+        /// 이벤트로 알리지 않고 반환하는 이유는, 호출한 쪽이 팝업을 다 띄울 때까지 기다린 뒤 씬을 바꿔야 하기 때문이다
         /// </remarks>
-        public void CheckAchievement()
+        /// <returns> 이번에 새로 열린 업적 목록. 없으면 빈 목록 </returns>
+        public List<AchievementDefinition> CheckAchievement()
         {
             List<string> unlocked = saveData.UnlockedAchievements;
+            List<AchievementDefinition> newlyUnlocked = new List<AchievementDefinition>();
 
             foreach (AchievementDefinition achievement in achievementTable.Achievements)
             {
@@ -121,8 +111,10 @@ namespace FMV
 
                 LogAchievement(achievement);
 
-                OnAchievementUnlocked?.Invoke(achievement.ID);
+                newlyUnlocked.Add(achievement);
             }
+
+            return newlyUnlocked;
         }
 
         /// <remarks>
