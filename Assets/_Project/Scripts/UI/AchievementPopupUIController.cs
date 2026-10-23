@@ -8,13 +8,15 @@ namespace FMV
     /// 새로 열린 업적을 알리는 인게임 팝업 UI를 보이고 숨긴다
     /// </summary>
     /// <remarks>
-    /// 같은 오브젝트의 CanvasGroup으로 켜고 끈다. 팝업 이미지는 화면 아래에 숨겨 두고, 이미지 높이만큼 올렸다가 내린다
+    /// 같은 오브젝트의 CanvasGroup으로 켜고 끈다. 팝업 이미지는 화면 아래에 숨겨 두고, 이미지 높이만큼 올렸다가 내린다.
+    /// 업적이 여러 개 열리면 겹쳐 띄울 수 있도록, popupImage는 원본으로만 쓰고 Popup마다 복제한 슬롯을 움직인다
     /// </remarks>
     [RequireComponent(typeof(CanvasGroup))]
     public class AchievementPopupUIController : MonoBehaviour, IUIVisible
     {
         #region Serialized Fields
 
+        // 슬롯을 복제할 원본. 직접 움직이지 않고 시작할 때 꺼 둔다
         [SerializeField] private Image popupImage;
 
         // 올라갔다 내려오기까지 걸리는 전체 시간(초). 절반은 올라가고 절반은 내려온다
@@ -26,8 +28,23 @@ namespace FMV
 
         private CanvasGroup group;
 
-        // 숨어 있는 위치. 팝업이 끝나면 여기로 돌아온다
+        // 숨어 있는 위치. 모든 슬롯이 여기서 올라갔다가 여기로 돌아온다
         private Vector2 hiddenPosition;
+
+        // 지금 떠 있는 슬롯 수. 새 슬롯은 이 수만큼 위로 쌓고, 0이 되면 팝업을 숨긴다
+        private int activeCount;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// 떠 있는 팝업 슬롯이 하나라도 있으면 true
+        /// </summary>
+        /// <remarks>
+        /// 씬을 바꾸면 팝업도 함께 사라지므로, 씬을 바꾸기 전에 이 값이 false가 될 때까지 기다린다
+        /// </remarks>
+        public bool IsPlaying => activeCount > 0;
 
         #endregion
 
@@ -37,6 +54,7 @@ namespace FMV
         {
             group = GetComponent<CanvasGroup>();
             hiddenPosition = popupImage.rectTransform.anchoredPosition;
+            popupImage.gameObject.SetActive(false);
 
             // 시작할 때는 숨겨 둔다
             Hide();
@@ -67,28 +85,38 @@ namespace FMV
         #region Popup
 
         /// <summary>
-        /// 팝업 이미지를 바꾸고 올렸다가 내린다
+        /// 원본 이미지를 복제한 슬롯에 업적 이미지를 넣고 올렸다가 내린다
         /// </summary>
         /// <param name="sprite"> 팝업에 띄울 업적 이미지 </param>
         /// <returns> 팝업이 끝날 때까지 기다릴 수 있도록 실행 중인 코루틴을 돌려준다 (yield return으로 대기) </returns>
+        /// <remarks>
+        /// 앞 팝업이 떠 있는 동안 다시 부르면, 새 슬롯은 떠 있는 슬롯 수만큼 위에 멈춰 겹치지 않는다
+        /// </remarks>
         public Coroutine Popup(Sprite sprite)
         {
-            popupImage.sprite = sprite;
+            Image slot = Instantiate(popupImage, popupImage.transform.parent);
+            slot.sprite = sprite;
+            slot.gameObject.SetActive(true);
 
-            return StartCoroutine(PlayPopup());
+            int stackIndex = activeCount;
+            activeCount++;
+
+            Show();
+
+            return StartCoroutine(PlayPopup(slot, stackIndex));
         }
 
         /// <remarks>
         /// 매 프레임 이동량을 더하지 않고 지난 시간 비율로 위치를 정해, 프레임이 튀어도 끝에서 정확히 제자리로 돌아온다
         /// </remarks>
-        private IEnumerator PlayPopup()
+        private IEnumerator PlayPopup(Image slot, int stackIndex)
         {
-            RectTransform rect = popupImage.rectTransform;
-            float height = rect.rect.height;
+            RectTransform rect = slot.rectTransform;
+
+            // 아래 슬롯들 위에 쌓이도록, 순서만큼 이미지 높이를 더 올린다
+            float riseHeight = rect.rect.height * (stackIndex + 1);
             float half = popupDuration / 2f;
             float time = 0f;
-
-            Show();
 
             while (time < popupDuration)
             {
@@ -98,11 +126,17 @@ namespace FMV
 
                 // 앞 절반은 0 → 1로 올라가고, 뒤 절반은 1 → 0으로 내려온다
                 float ratio = (time < half) ? (time / half) : ((popupDuration - time) / half);
-                rect.anchoredPosition = hiddenPosition + Vector2.up * (height * Mathf.Clamp01(ratio));
+                rect.anchoredPosition = hiddenPosition + Vector2.up * (riseHeight * Mathf.Clamp01(ratio));
             }
 
-            rect.anchoredPosition = hiddenPosition;
-            Hide();
+            Destroy(slot.gameObject);
+            activeCount--;
+
+            // 다른 슬롯이 아직 떠 있으면 숨기지 않는다
+            if (activeCount == 0)
+            {
+                Hide();
+            }
         }
 
         #endregion
@@ -118,6 +152,7 @@ namespace FMV
             group.interactable = visible;
             group.blocksRaycasts = visible;
         }
+
 
         #endregion
     }
