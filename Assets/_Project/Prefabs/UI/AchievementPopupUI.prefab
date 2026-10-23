@@ -204,3 +204,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1cd5f4ee5dcadc4ab9bff9329fbba35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FMV.AchievementPopupUIController
+  popupImage: {fileID: 5557403526989476328}
+  popupDuration: 3
