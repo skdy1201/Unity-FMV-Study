@@ -23,9 +23,7 @@ namespace FMV
         [Header("Scene References")]
         [SerializeField] private VideoPlayerController videoPlayerController;
         [SerializeField] private ActionUIController actionUIController;
-
-        [Header("Prefabs")]
-        [SerializeField] private SaveController saveControllerPrefab;
+        [SerializeField] private SaveController saveController;
 
         [Header("UI Prefabs")]
         [SerializeField] private GameObject mediaInteractUI;
@@ -43,7 +41,6 @@ namespace FMV
         private GameState gameState = new GameState();
         private GameInput gameInput = new GameInput();
 
-        private SaveController saveController;
         private AchievementPopupUIController achievementPopupUI;
 
         // 이번 씬에서 들어간 엔딩. 엔딩에 들어가면 NewestGrade가 엔딩 뒤 시작 위치로 바뀌므로, 엔딩 영상이 끝났는지는 이 값으로 안다.
@@ -58,8 +55,6 @@ namespace FMV
 
         private void Awake()
         {
-            SpawnSaveController();
-
             interfaceList = new List<ISetting> { gameData, clipConnect };
 
             foreach (ISetting set in interfaceList)
@@ -77,6 +72,7 @@ namespace FMV
 
         private void Start()
         {
+            BindSaveData();
             GameEntry();
         }
 
@@ -100,15 +96,14 @@ namespace FMV
         #region Save
 
         /// <summary>
-        /// SaveController 프리팹을 생성해 참조를 보관하고, 불러온 기록을 GameState에 넘긴다
+        /// 씬의 SaveController가 불러온 기록을 GameState에 넘긴다
         /// </summary>
         /// <remarks>
-        /// Instantiate가 반환하기 전에 SaveController.Awake가 실행되어 save.json을 불러오므로,
-        /// 다른 파츠가 기록을 쓰기 전에 가장 먼저 부른다
+        /// SaveController는 Awake에서 save.json을 불러오므로, 모든 Awake가 끝난 뒤인 Start에서 받아야 순서와 상관없이 기록이 준비되어 있다.
+        /// GameEntry가 기록을 쓰므로 그보다 먼저 부른다
         /// </remarks>
-        private void SpawnSaveController()
+        private void BindSaveData()
         {
-            saveController = Instantiate(saveControllerPrefab);
             gameState.GameSave = saveController.SaveData;
         }
 
