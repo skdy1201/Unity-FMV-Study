@@ -10,13 +10,16 @@ namespace FMV
     /// VideoPlayer 여러 개를 하나의 RenderTexture에 연결해, 다음 분기 클립을 미리 준비해 두고 바꿔 가며 재생
     /// </summary>
     /// <remarks>
-    /// 모든 플레이어가 같은 RenderTexture에 그리므로 한 번에 하나만 재생해야 한다
+    /// 모든 플레이어가 같은 RenderTexture에 그리므로 한 번에 하나만 재생해야 한다.
+    /// 영상 화면은 screenGroup의 CanvasGroup으로 켜고 끈다. 플레이어와 코루틴은 이 오브젝트에 있으므로, 이 오브젝트를 끄지 말고 화면만 숨긴다.
+    /// 화면 Canvas 자체에 붙일 때는 같은 오브젝트의 CanvasGroup을 screenGroup에 넣는다
     /// </remarks>
-    public class VideoPlayerController : MonoBehaviour
+    public class VideoPlayerController : MonoBehaviour, IUIVisible
     {
         #region Serialized Fields
 
         [SerializeField] private RenderTexture renderTexture;
+        [SerializeField] private CanvasGroup screenGroup;
 
         #endregion
 
@@ -29,6 +32,9 @@ namespace FMV
         private int playIndex = 0;
         private float playSpeed = 1f;
         private Vector2 loop = Vector2.zero;
+
+        // Hide가 멈춘 영상만 Show에서 다시 재생하기 위한 표시
+        private bool isPausedByHide = false;
 
         private Coroutine loopRoutine;
         private Coroutine actionRoutine;
@@ -58,6 +64,11 @@ namespace FMV
                 Debug.LogError("Render Texture empty!");
             }
 
+            if (screenGroup == null)
+            {
+                Debug.LogError("Screen CanvasGroup empty!");
+            }
+
             for (int i = 0; i < MaxVideoCount; ++i)
             {
                 VideoPlayer player = gameObject.AddComponent<VideoPlayer>();
@@ -67,6 +78,46 @@ namespace FMV
                 videoPlayers.Add(player);
 
                 player.loopPointReached += OnLoopPointReached;
+            }
+        }
+
+        #endregion
+
+        #region IUIVisible
+
+        /// <summary>
+        /// 영상 화면을 보이고 입력을 받게 한다. Hide가 멈춘 영상이면 이어서 재생한다
+        /// </summary>
+        /// <remarks>
+        /// 숨기기 전에 이미 멈춰 있던 영상은 그대로 둔다
+        /// </remarks>
+        public void Show()
+        {
+            SetGroupVisible(true);
+
+            if (isPausedByHide)
+            {
+                isPausedByHide = false;
+                videoPlayers[playIndex].Play();
+            }
+        }
+
+        /// <summary>
+        /// 영상 화면을 숨기고 입력을 막는다. 재생 중이던 영상은 일시정지한다
+        /// </summary>
+        /// <remarks>
+        /// 오브젝트를 끄지 않으므로 준비해 둔 클립과 구간 반복·Action 대기는 그대로 남는다.
+        /// 숨긴 상태에서 다시 불려도 이미 멈춰 있으므로 표시를 덮어쓰지 않는다
+        /// </remarks>
+        public void Hide()
+        {
+            SetGroupVisible(false);
+
+            VideoPlayer player = videoPlayers[playIndex];
+            if (player.isPlaying)
+            {
+                player.Pause();
+                isPausedByHide = true;
             }
         }
 
@@ -311,6 +362,20 @@ namespace FMV
 
                 yield return null;
             }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        /// <remarks>
+        /// CanvasGroup으로 켜고 끄므로, 보임·입력·레이캐스트를 한 번에 맞춘다
+        /// </remarks>
+        private void SetGroupVisible(bool visible)
+        {
+            screenGroup.alpha = visible ? 1f : 0f;
+            screenGroup.interactable = visible;
+            screenGroup.blocksRaycasts = visible;
         }
 
         #endregion

@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Video;
 
 namespace FMV
@@ -22,7 +21,6 @@ namespace FMV
         [SerializeField] private ClipConnect clipConnect = new ClipConnect();
 
         [Header("Scene References")]
-        [FormerlySerializedAs("videoPlayer")]
         [SerializeField] private VideoPlayerController videoPlayerController;
         [SerializeField] private ActionUIController actionUIController;
 
