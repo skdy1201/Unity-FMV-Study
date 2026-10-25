@@ -12,7 +12,7 @@ namespace FMV
     /// <remarks>
     /// 모든 플레이어가 같은 RenderTexture에 그리므로 한 번에 하나만 재생해야 한다
     /// </remarks>
-    public class VideoPlayerScript : MonoBehaviour
+    public class VideoPlayerController : MonoBehaviour
     {
         #region Serialized Fields
 

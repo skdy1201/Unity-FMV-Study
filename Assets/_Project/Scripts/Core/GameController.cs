@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Video;
 
 namespace FMV
@@ -21,7 +22,8 @@ namespace FMV
         [SerializeField] private ClipConnect clipConnect = new ClipConnect();
 
         [Header("Scene References")]
-        [SerializeField] private VideoPlayerScript videoPlayer;
+        [FormerlySerializedAs("videoPlayer")]
+        [SerializeField] private VideoPlayerController videoPlayerController;
         [SerializeField] private ActionUIController actionUIController;
 
         [Header("Prefabs")]
@@ -67,8 +69,8 @@ namespace FMV
                 set.Init();
             }
 
-            videoPlayer.ClipEnd += ClipEnd;
-            videoPlayer.OnActionReached += EnterAction;
+            videoPlayerController.ClipEnd += ClipEnd;
+            videoPlayerController.OnActionReached += EnterAction;
 
             ConnectMediaButton();
             ConnectActionUIController();
@@ -146,8 +148,8 @@ namespace FMV
 
             gameState.UpdateGrade(currentId);
 
-            videoPlayer.PrepareNextClips(clips);
-            videoPlayer.PlayClip(currentId);
+            videoPlayerController.PrepareNextClips(clips);
+            videoPlayerController.PlayClip(currentId);
 
             gameState.GamePhase.SetPhase(PhaseState.Play);
 
@@ -155,7 +157,7 @@ namespace FMV
             if (gameData.TryGetNodeInfo(currentId, out JsonNodeInfo info))
             {
                 gameState.CheckpointGrade = currentId;
-                videoPlayer.WaitActionTime(info.Timing.ActionStart);
+                videoPlayerController.WaitActionTime(info.Timing.ActionStart);
             }
 
             if (gameData.TryGetEndingInfo(currentId, out JsonEndingInfo ending))
@@ -216,7 +218,7 @@ namespace FMV
             // LoopEnd가 LoopStart 이하이면 반복하지 않는 분기다
             if (timing.LoopEnd > timing.LoopStart)
             {
-                videoPlayer.SetLoopTime(new Vector2(timing.LoopStart, timing.LoopEnd), speed);
+                videoPlayerController.SetLoopTime(new Vector2(timing.LoopStart, timing.LoopEnd), speed);
             }
 
             // Play 단계에서 켜 둔 미디어 버튼이 Action 중에도 눌려 영상을 멈추지 않도록 숨긴다
@@ -229,7 +231,7 @@ namespace FMV
                     break;
                 case "QTE":
                     // QTE는 반복 구간이 없어 SetLoopTime을 타지 않으므로 슬로 배속을 따로 건다
-                    videoPlayer.SetActionSpeed(speed);
+                    videoPlayerController.SetActionSpeed(speed);
                     actionUIController.ActiveQTEUI(timing.TimeLimit);
                     break;
                 default:
@@ -349,7 +351,7 @@ namespace FMV
         /// MediaInteractUI 프리팹을 생성하고, 버튼 클릭을 영상 재생/일시정지에 연결한다
         /// </summary>
         /// <remarks>
-        /// 프리팹은 씬의 VideoPlayerScript를 Inspector에서 참조할 수 없으므로, 생성한 뒤 코드로 연결한다
+        /// 프리팹은 씬의 VideoPlayerController를 Inspector에서 참조할 수 없으므로, 생성한 뒤 코드로 연결한다
         /// </remarks>
         private void ConnectMediaButton()
         {
@@ -362,7 +364,7 @@ namespace FMV
                 return;
             }
 
-            playButton.Bind(videoPlayer.RenewPlay);
+            playButton.Bind(videoPlayerController.RenewPlay);
             mediaVisual = ui.GetComponentInChildren<ButtonVisual>();
         }
 
