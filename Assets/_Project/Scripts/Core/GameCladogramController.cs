@@ -18,6 +18,9 @@ namespace FMV
         [SerializeField] private GameCladogramData cladogramData = new GameCladogramData();
         [SerializeField] private ThumbnailConnect thumbnailConnect = new ThumbnailConnect();
 
+        [Header("Controllers")]
+        [SerializeField] private GameController gameController;
+
         [Header("UI")]
         [SerializeField] private CladogramUIController cladogramUI;
 
