@@ -51,6 +51,18 @@ namespace FMV
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// 분기 연결 구조. 영상 진행과 분기도가 같은 Graph를 쓴다
+        /// </summary>
+        /// <remarks>
+        /// GameData가 Awake에서 만들므로 다른 오브젝트는 Start 이후에 받는다
+        /// </remarks>
+        public Graph Graph => gameData.Graph;
+
+        #endregion
+
         #region Unity Lifecycle
 
         private void Awake()
