@@ -23,13 +23,14 @@ namespace FMV
 
         [Header("Controllers")]
         [SerializeField] private GameController gameController;
+        [SerializeField] private SaveController saveController;
 
         [Header("UI Prefabs")]
         [SerializeField] private CladogramUIController cladogramUIPrefab;
 
         [Header("Layout")]
         [Tooltip("x: 단계(깊이) 사이 가로 간격, y: 같은 단계 안 카드 사이 세로 간격")]
-        [SerializeField] private Vector2 cardSpacing = new Vector2(450f, 350f);
+        [SerializeField] private Vector2 cardSpacing = new Vector2(900f, 350f);
 
         #endregion
 
@@ -142,7 +143,7 @@ namespace FMV
         }
 
         /// <summary>
-        /// 분기 id로 카드 정보와 썸네일을 찾아, 썸네일과 제목을 띄운 카드 한 장을 만든다
+        /// 분기 id로 카드 정보와 썸네일을 찾아, 썸네일과 제목을 띄우고 방문 여부로 색을 정한 카드 한 장을 만든다
         /// </summary>
         /// <remarks>
         /// 생성은 CladogramUIController에 맡기고, 여기서는 데이터를 찾아 채운다. 위치는 BuildCladogram이 정한다
@@ -160,6 +161,9 @@ namespace FMV
             CladogramCard card = cladogramUI.CreateCard();
             card.SetId(id);
             card.SetThumbnail(thumbnailConnect.GetThumbnail(info.Thumbnail), info.Title);
+
+            // SaveController는 Awake에서 save.json을 불러오므로, Start에서 부르는 BuildCladogram 안에서는 기록이 준비되어 있다
+            card.SetVisited(saveController.SaveData.Progress.Visited.Contains(id));
 
             return card;
         }
