@@ -85,6 +85,9 @@ namespace FMV
         private void Start()
         {
             BindSaveData();
+
+            // 씬에 들어오면 분기도가 먼저 나오므로, 분기를 고르기 전까지 영상 화면은 숨겨 둔다
+            videoPlayerController.Hide();
         }
 
         private void Update()

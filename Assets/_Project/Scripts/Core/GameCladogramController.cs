@@ -9,7 +9,7 @@ namespace FMV
     /// 분기도 데이터를 준비하고, GameController와 분기도 화면 사이를 잇는다
     /// </summary>
     /// <remarks>
-    /// 화면을 켜고 끄는 일은 CladogramUIController가 맡고, 여기서는 참조로 들고 호출만 한다.
+    /// 화면을 켜고 끄는 일은 CladogramUIController가 맡고, 여기서는 프리팹으로 생성해 참조로 들고 호출만 한다.
     /// 분기도에만 쓰는 파츠는 ISetting으로 묶어 Awake에서 Init, OnDisable에서 End를 같은 순서로 호출한다.
     /// 분기 구조(Graph)는 GameController에게서 받아, 영상 진행과 같은 데이터로 분기도를 그린다
     /// </remarks>
@@ -24,8 +24,8 @@ namespace FMV
         [Header("Controllers")]
         [SerializeField] private GameController gameController;
 
-        [Header("UI")]
-        [SerializeField] private CladogramUIController cladogramUI;
+        [Header("UI Prefabs")]
+        [SerializeField] private CladogramUIController cladogramUIPrefab;
 
         [Header("Layout")]
         [Tooltip("x: 단계(깊이) 사이 가로 간격, y: 같은 단계 안 카드 사이 세로 간격")]
@@ -35,6 +35,7 @@ namespace FMV
 
         #region Private Fields
 
+        private CladogramUIController cladogramUI;
         private List<ISetting> interfaceList;
 
         #endregion
@@ -49,6 +50,8 @@ namespace FMV
             {
                 set.Init();
             }
+
+            SpawnCladogramUI();
         }
 
         private void Start()
@@ -62,6 +65,21 @@ namespace FMV
             {
                 set.End();
             }
+        }
+
+        #endregion
+
+        #region UI
+
+        /// <summary>
+        /// 분기도 화면 프리팹을 생성해 참조를 보관한다
+        /// </summary>
+        /// <remarks>
+        /// 카드는 이 화면 아래에 만들어지므로, Start의 BuildCladogram보다 먼저 Awake에서 생성한다
+        /// </remarks>
+        private void SpawnCladogramUI()
+        {
+            cladogramUI = Instantiate(cladogramUIPrefab);
         }
 
         #endregion

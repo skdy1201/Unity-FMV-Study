@@ -9,7 +9,7 @@ namespace FMV
     /// <remarks>
     /// 분기도 Canvas에 붙이고, 같은 오브젝트의 CanvasGroup으로 켜고 끈다.
     /// 배경 Sprite는 Inspector에서 넣고 Awake에서 배경 Image에 적용한다.
-    /// 언제 켜고 끌지는 바깥 컨트롤러가 정하고, 여기서는 Show/Hide 호출만 받는다
+    /// 씬에 들어오면 분기도가 먼저 나오므로 보이는 상태로 시작한다. 언제 끌지는 바깥 컨트롤러가 정하고, 여기서는 Show/Hide 호출만 받는다
     /// </remarks>
     [RequireComponent(typeof(CanvasGroup))]
     public class CladogramUIController : MonoBehaviour, IUIVisible
@@ -38,9 +38,6 @@ namespace FMV
         {
             group = GetComponent<CanvasGroup>();
             backgroundImage.sprite = backgroundSprite;
-
-            // 시작할 때는 숨겨 둔다
-            Hide();
         }
 
         #endregion
