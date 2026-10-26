@@ -28,8 +28,6 @@ namespace FMV
         [SerializeField] private RectTransform cardContent;
 
         [Header("Line")]
-        [Tooltip("선을 모아 두는 cardContent의 첫 번째 자식. 카드보다 먼저 그려져 카드 뒤에 깔린다")]
-        [SerializeField] private RectTransform lineLayer;
         [SerializeField] private Sprite openedLineSprite;
         [SerializeField] private Sprite lockedLineSprite;
         [SerializeField] private Sprite jointSprite;
@@ -100,9 +98,11 @@ namespace FMV
         #region Line
 
         /// <summary>
-        /// 두 점 사이에 선 한 조각을 lineLayer 아래에 만든다
+        /// 두 점 사이에 선 한 조각을 카드와 같은 cardContent 아래에 만든다
         /// </summary>
         /// <remarks>
+        /// 카드와 같은 부모라 카드 좌표를 그대로 쓰고, 드래그·확대도 함께 따라간다.
+        /// UI는 형제 순서대로 그려지므로, 카드보다 먼저 만들어야 카드 뒤에 깔린다.
         /// 선 스프라이트를 Tiled로 길이 방향으로 반복해 늘려도 점선 간격이 유지된다.
         /// 가로로 만든 뒤 두 점의 방향만큼 돌리므로, 세로 조각은 90도 돌린 가로 선이 된다.
         /// 분기도는 꺾인 선으로만 이으므로 가로·세로 조각만 넘긴다
@@ -114,7 +114,7 @@ namespace FMV
         public Image CreateLine(Vector2 start, Vector2 end, bool isOpened)
         {
             GameObject line = new GameObject("Line", typeof(RectTransform), typeof(Image));
-            line.transform.SetParent(lineLayer, false);
+            line.transform.SetParent(cardContent, false);
 
             Image image = line.GetComponent<Image>();
             image.sprite = isOpened ? openedLineSprite : lockedLineSprite;
