@@ -2,12 +2,13 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace FMV
 {
     /// <summary>
-    /// 분기도에 놓이는 카드 한 장. 분기 id를 가지고 썸네일과 제목을 띄우며, 방문 여부로 색을 바꾸고 호버 중에는 크기가 커졌다 작아진다
+    /// 분기도에 놓이는 카드 한 장. 분기 id를 가지고 썸네일과 제목을 띄우며, 진행 상태로 색과 잠김을 바꾸고 호버 중에는 크기가 커졌다 작아진다
     /// </summary>
     /// <remarks>
     /// 분기도가 코드로 생성한 뒤 setter로 값을 넣는다. 썸네일과 제목은 따로 들고 있지 않고 카드의 Image와 텍스트에 바로 띄운다.
@@ -23,9 +24,11 @@ namespace FMV
         [SerializeField] private Image frameImage;
         [SerializeField] private Image thumbnailImage;
         [SerializeField] private TMP_Text titleText;
+        [SerializeField] private Image lockImage;
 
-        [Header("Visited")]
-        [SerializeField] private Color visitedColor = Color.white;
+        [Header("State")]
+        [FormerlySerializedAs("visitedColor")]
+        [SerializeField] private Color watchedColor = Color.white;
 
         [Header("Hover")]
         [Tooltip("호버 중 가장 커졌을 때의 배율")]
@@ -39,7 +42,7 @@ namespace FMV
 
         private Coroutine hoverRoutine;
 
-        // 방문하지 않은 카드는 프리팹에 정해 둔 원래 색을 그대로 쓴다
+        // 끝까지 보지 않은 카드는 프리팹에 정해 둔 원래 색을 그대로 쓴다
         private Color frameOriginalColor;
         private Color thumbnailOriginalColor;
 
@@ -83,16 +86,26 @@ namespace FMV
         }
 
         /// <summary>
-        /// 방문한 카드는 프레임과 썸네일을 방문 색으로, 방문하지 않은 카드는 원래 색으로 띄운다
+        /// 진행 상태에 맞게 카드를 띄운다. 본 카드는 본 색, 열린 카드는 원래 색, 잠긴 카드는 프레임·썸네일·제목을 가리고 자물쇠만 띄운다
         /// </summary>
         /// <remarks>
-        /// Image 색은 원본 Sprite에 곱해지므로, 원래 색보다 밝게 보이려면 프리팹의 원래 색을 방문 색보다 어둡게 둔다
+        /// Image 색은 원본 Sprite에 곱해지므로, 원래 색보다 밝게 보이려면 프리팹의 원래 색을 본 색보다 어둡게 둔다.
+        /// 잠긴 카드도 자리는 그대로 두어 분기도의 모양은 보이게 한다
         /// </remarks>
-        /// <param name="isVisited"> save.json에 들어간 기록이 있으면 true </param>
-        public void SetVisited(bool isVisited)
+        /// <param name="state"> save.json 기록으로 정한 카드 상태 </param>
+        public void SetState(CardState state)
         {
-            frameImage.color = isVisited ? visitedColor : frameOriginalColor;
-            thumbnailImage.color = isVisited ? visitedColor : thumbnailOriginalColor;
+            bool isLocked = state == CardState.Locked;
+            bool isWatched = state == CardState.Watched;
+
+            // 잠긴 카드는 자물쇠만 남긴다. 프레임이 꺼지면 레이캐스트도 받지 않아 호버·클릭이 걸리지 않는다
+            frameImage.enabled = !isLocked;
+            thumbnailImage.enabled = !isLocked;
+            titleText.enabled = !isLocked;
+            lockImage.enabled = isLocked;
+
+            frameImage.color = isWatched ? watchedColor : frameOriginalColor;
+            thumbnailImage.color = isWatched ? watchedColor : thumbnailOriginalColor;
         }
 
         #endregion

@@ -143,7 +143,7 @@ namespace FMV
         }
 
         /// <summary>
-        /// 분기 id로 카드 정보와 썸네일을 찾아, 썸네일과 제목을 띄우고 방문 여부로 색을 정한 카드 한 장을 만든다
+        /// 분기 id로 카드 정보와 썸네일을 찾아, 썸네일과 제목을 띄우고 진행 상태를 정한 카드 한 장을 만든다
         /// </summary>
         /// <remarks>
         /// 생성은 CladogramUIController에 맡기고, 여기서는 데이터를 찾아 채운다. 위치는 BuildCladogram이 정한다
@@ -162,10 +162,34 @@ namespace FMV
             card.SetId(id);
             card.SetThumbnail(thumbnailConnect.GetThumbnail(info.Thumbnail), info.Title);
 
-            // SaveController는 Awake에서 save.json을 불러오므로, Start에서 부르는 BuildCladogram 안에서는 기록이 준비되어 있다
-            card.SetVisited(saveController.SaveData.Progress.Visited.Contains(id));
+            card.SetState(GetCardState(id));
 
             return card;
+        }
+
+        /// <summary>
+        /// save.json 기록으로 카드 상태를 정한다
+        /// </summary>
+        /// <remarks>
+        /// SaveController는 Awake에서 save.json을 불러오므로, Start에서 부르는 BuildCladogram 안에서는 기록이 준비되어 있다.
+        /// 시작 분기는 기록이 없어도 고를 수 있어야 하므로 최소 열림으로 둔다
+        /// </remarks>
+        /// <param name="id"> 분기 id </param>
+        private CardState GetCardState(string id)
+        {
+            JsonProgressInfo progress = saveController.SaveData.Progress;
+
+            if (progress.Watched.Contains(id))
+            {
+                return CardState.Watched;
+            }
+
+            if (progress.Visited.Contains(id) || id == gameController.Graph.Start.ID)
+            {
+                return CardState.Opened;
+            }
+
+            return CardState.Locked;
         }
 
         #endregion
