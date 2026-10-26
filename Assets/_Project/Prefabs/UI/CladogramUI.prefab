@@ -134,6 +134,14 @@ MonoBehaviour:
   backgroundSprite: {fileID: 21300000, guid: 61890bf741b4b73438c81ba304028e40, type: 3}
   cardPrefab: {fileID: 4413636926714409545, guid: 74644c9d7e1b3034f9d49c4029f8a147, type: 3}
   cardContent: {fileID: 815716357083058673}
+  lineLayer: {fileID: 815716357083058673}
+  openedLineSprite: {fileID: 21300000, guid: 90833e4860fee3e4caf8603bf4372163, type: 3}
+  lockedLineSprite: {fileID: 21300000, guid: e006b75f6502a8743b4c0aa8c832cab0, type: 3}
+  jointSprite: {fileID: 21300000, guid: 688c0f9ecf954a94185ba8d845b508af, type: 3}
+  lineThickness: 25
+  zoomStep: 0.1
+  minZoom: 0.5
+  maxZoom: 1.5
 --- !u!1 &8405944830039145558
 GameObject:
   m_ObjectHideFlags: 0

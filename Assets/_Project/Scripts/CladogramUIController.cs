@@ -27,6 +27,14 @@ namespace FMV
         [SerializeField] private CladogramCard cardPrefab;
         [SerializeField] private RectTransform cardContent;
 
+        [Header("Line")]
+        [Tooltip("선을 모아 두는 cardContent의 첫 번째 자식. 카드보다 먼저 그려져 카드 뒤에 깔린다")]
+        [SerializeField] private RectTransform lineLayer;
+        [SerializeField] private Sprite openedLineSprite;
+        [SerializeField] private Sprite lockedLineSprite;
+        [SerializeField] private Sprite jointSprite;
+        [SerializeField] private float lineThickness = 25f;
+
         [Header("Zoom")]
         [Tooltip("휠 한 칸에 바뀌는 배율")]
         [SerializeField] private float zoomStep = 0.1f;
@@ -85,6 +93,45 @@ namespace FMV
         public CladogramCard CreateCard()
         {
             return Instantiate(cardPrefab, cardContent);
+        }
+
+        #endregion
+
+        #region Line
+
+        /// <summary>
+        /// 두 점 사이에 선 한 조각을 lineLayer 아래에 만든다
+        /// </summary>
+        /// <remarks>
+        /// 선 스프라이트를 Tiled로 길이 방향으로 반복해 늘려도 점선 간격이 유지된다.
+        /// 가로로 만든 뒤 두 점의 방향만큼 돌리므로, 세로 조각은 90도 돌린 가로 선이 된다.
+        /// 분기도는 꺾인 선으로만 이으므로 가로·세로 조각만 넘긴다
+        /// </remarks>
+        /// <param name="start"> 시작점 (cardContent 기준 좌표) </param>
+        /// <param name="end"> 끝점 (cardContent 기준 좌표) </param>
+        /// <param name="isOpened"> 열린 분기로 이어지면 true, 잠긴 분기면 false </param>
+        /// <returns> 만든 선 Image </returns>
+        public Image CreateLine(Vector2 start, Vector2 end, bool isOpened)
+        {
+            GameObject line = new GameObject("Line", typeof(RectTransform), typeof(Image));
+            line.transform.SetParent(lineLayer, false);
+
+            Image image = line.GetComponent<Image>();
+            image.sprite = isOpened ? openedLineSprite : lockedLineSprite;
+            image.type = Image.Type.Tiled;
+
+            // 선은 카드 뒤 장식이라 드래그·호버를 가로채지 않게 한다
+            image.raycastTarget = false;
+
+            Vector2 direction = end - start;
+
+            // 피벗이 가운데이므로 두 점의 중간에 놓고, 길이만큼 늘린 뒤 방향만큼 돌린다
+            RectTransform rect = (RectTransform)line.transform;
+            rect.anchoredPosition = (start + end) * 0.5f;
+            rect.sizeDelta = new Vector2(direction.magnitude, lineThickness);
+            rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+
+            return image;
         }
 
         #endregion
