@@ -93,6 +93,23 @@ namespace FMV
         }
 
         /// <summary>
+        /// 영상 끝까지 본 분기로 기록한다
+        /// </summary>
+        /// <remarks>
+        /// 같은 분기를 다시 봐도 한 번만 기록한다
+        /// </remarks>
+        /// <param name="id"> 끝까지 본 분기 id </param>
+        public void MarkWatched(string id)
+        {
+            JsonProgressInfo progress = gameSave.Progress;
+
+            if (!progress.Watched.Contains(id))
+            {
+                progress.Watched.Add(id);
+            }
+        }
+
+        /// <summary>
         /// 실패 횟수를 1 올린다
         /// </summary>
         public void AddFall()

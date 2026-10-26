@@ -286,9 +286,12 @@ namespace FMV
 
         private void ClipEnd(NodeResult result)
         {
-            // 엔딩 기록은 들어갈 때 이미 바꿨으므로, 영상이 끝나면 메인 메뉴로 넘어가기만 한다
+            // 엔딩 기록은 들어갈 때 이미 바꿨으므로, 영상이 끝나면 본 것으로 기록하고 메인 메뉴로 넘어가기만 한다.
+            // 엔딩에 들어가면 NewestGrade가 엔딩 뒤 시작 위치로 바뀌므로, 엔딩 id는 currentEnding에서 꺼낸다
             if (currentEnding != null)
             {
+                gameState.MarkWatched(currentEnding.ID);
+
                 StartCoroutine(PlayEnding());
 
                 return;
@@ -296,6 +299,9 @@ namespace FMV
 
             // 엔딩은 위에서 빠져나가므로, 여기까지 오면 NewestGrade는 지금 재생이 끝난 일반 분기다
             string currentId = gameState.NewestGrade;
+
+            // 다음 분기로 넘어가며 저장하므로 따로 저장하지 않는다
+            gameState.MarkWatched(currentId);
             string nextId = gameData.Graph.GetNext(currentId, result)?.ID;
 
             if (nextId == null)

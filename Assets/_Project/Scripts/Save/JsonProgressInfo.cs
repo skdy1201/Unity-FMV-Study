@@ -16,6 +16,7 @@ namespace FMV
         #region Serialized Fields
 
         [SerializeField] private List<string> visited = new List<string>();
+        [SerializeField] private List<string> watched = new List<string>();
         [SerializeField] private int fallCount = 0;
         [SerializeField] private string newestId = string.Empty;
         [SerializeField] private string lastSelect = string.Empty;
@@ -32,6 +33,15 @@ namespace FMV
         /// 목록 자체를 바꾸면 null이 들어갈 수 있어 set을 두지 않는다. 내용은 Add로 바꾼다
         /// </remarks>
         public List<string> Visited => visited;
+
+        /// <summary>
+        /// 영상 끝(ClipEnd)까지 본 분기 id 목록
+        /// </summary>
+        /// <remarks>
+        /// 선택지·QTE로 끝난 분기도 ClipEnd를 거치므로 본 것으로 친다.
+        /// visited는 들어간 분기, watched는 그중 끝까지 본 분기다. 분기도 카드 상태를 나누는 데 쓴다
+        /// </remarks>
+        public List<string> Watched => watched;
 
         /// <summary>
         /// 누적 실패 횟수
