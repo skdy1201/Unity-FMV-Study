@@ -50,5 +50,32 @@ namespace FMV
         }
 
         #endregion
+
+        #region Card
+
+        /// <summary>
+        /// 분기 id로 카드 정보와 썸네일을 찾아 카드 한 장을 만든다
+        /// </summary>
+        /// <remarks>
+        /// 생성은 CladogramUIController에 맡기고, 여기서는 데이터를 찾아 채운다. 위치는 아직 정하지 않는다
+        /// </remarks>
+        /// <param name="id"> 카드로 만들 분기 id </param>
+        /// <returns> 만든 카드, cards.json에 없는 id면 null </returns>
+        private CladogramCard MakeCard(string id)
+        {
+            if (!cladogramData.CardMapping.TryGetValue(id, out JsonCardInfo info))
+            {
+                Debug.LogError($"Card info not found: {id}");
+                return null;
+            }
+
+            CladogramCard card = cladogramUI.CreateCard();
+            card.SetId(id);
+            card.SetThumbnail(thumbnailConnect.GetThumbnail(info.Thumbnail));
+
+            return card;
+        }
+
+        #endregion
     }
 }

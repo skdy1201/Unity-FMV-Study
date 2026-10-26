@@ -4,7 +4,7 @@ using UnityEngine.UI;
 namespace FMV
 {
     /// <summary>
-    /// 분기도 화면 UI를 보이고 숨기고, 배경을 띄운다
+    /// 분기도 화면 UI를 보이고 숨기고, 배경을 띄우고, 카드를 생성한다
     /// </summary>
     /// <remarks>
     /// 분기도 Canvas에 붙이고, 같은 오브젝트의 CanvasGroup으로 켜고 끈다.
@@ -19,6 +19,10 @@ namespace FMV
         [Header("Background")]
         [SerializeField] private Image backgroundImage;
         [SerializeField] private Sprite backgroundSprite;
+
+        [Header("Card")]
+        [SerializeField] private CladogramCard cardPrefab;
+        [SerializeField] private RectTransform cardContent;
 
         #endregion
 
@@ -57,6 +61,22 @@ namespace FMV
         public void Hide()
         {
             SetGroupVisible(false);
+        }
+
+        #endregion
+
+        #region Card
+
+        /// <summary>
+        /// 카드 프리팹을 카드 영역(Content) 아래에 생성한다
+        /// </summary>
+        /// <remarks>
+        /// 값(id, 썸네일)과 위치는 채우지 않은 채로 돌려주므로, 부른 쪽에서 채운다
+        /// </remarks>
+        /// <returns> 생성한 카드 </returns>
+        public CladogramCard CreateCard()
+        {
+            return Instantiate(cardPrefab, cardContent);
         }
 
         #endregion
