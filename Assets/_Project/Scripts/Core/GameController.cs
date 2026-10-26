@@ -421,6 +421,12 @@ namespace FMV
                 return;
             }
 
+            // 영상 화면이 숨겨진 동안(분기도가 떠 있는 동안)의 클릭은 영상 입력으로 받지 않는다
+            if (!videoPlayerController.IsVisible)
+            {
+                return;
+            }
+
             if (gameInput.IsScreenClicked())
             {
                 if (gameState.GamePhase.Current == PhaseState.Play)

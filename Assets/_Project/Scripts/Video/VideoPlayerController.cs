@@ -41,6 +41,18 @@ namespace FMV
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// 영상 화면이 보이는 중인지
+        /// </summary>
+        /// <remarks>
+        /// Show/Hide가 CanvasGroup의 alpha를 바꾸므로 그 값으로 판단한다
+        /// </remarks>
+        public bool IsVisible => screenGroup.alpha > 0f;
+
+        #endregion
+
         #region Events
 
         /// <summary>
