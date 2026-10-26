@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -12,9 +13,10 @@ namespace FMV
     /// </summary>
     /// <remarks>
     /// 분기도가 코드로 생성한 뒤 setter로 값을 넣는다. 썸네일과 제목은 따로 들고 있지 않고 카드의 Image와 텍스트에 바로 띄운다.
-    /// 호버는 마우스가 들어오고 나가는 순간에만 이벤트를 받아, 호버 중인 카드에서만 코루틴이 돈다
+    /// 호버는 마우스가 들어오고 나가는 순간에만 이벤트를 받아, 호버 중인 카드에서만 코루틴이 돈다.
+    /// 클릭되면 Clicked로 분기 id만 알리고, 그 id로 무엇을 할지는 분기도 컨트롤러가 정한다
     /// </remarks>
-    public class CladogramCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class CladogramCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
     {
         #region Serialized Fields
 
@@ -41,10 +43,20 @@ namespace FMV
         #region Private Fields
 
         private Coroutine hoverRoutine;
+        private CardState state = CardState.Locked;
 
         // 끝까지 보지 않은 카드는 프리팹에 정해 둔 원래 색을 그대로 쓴다
         private Color frameOriginalColor;
         private Color thumbnailOriginalColor;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// 열렸거나 본 카드를 좌클릭하면 카드의 분기 id를 넘겨 호출된다
+        /// </summary>
+        public event Action<string> Clicked;
 
         #endregion
 
@@ -95,6 +107,8 @@ namespace FMV
         /// <param name="state"> save.json 기록으로 정한 카드 상태 </param>
         public void SetState(CardState state)
         {
+            this.state = state;
+
             bool isLocked = state == CardState.Locked;
             bool isWatched = state == CardState.Watched;
 
@@ -106,6 +120,32 @@ namespace FMV
 
             frameImage.color = isWatched ? watchedColor : frameOriginalColor;
             thumbnailImage.color = isWatched ? watchedColor : thumbnailOriginalColor;
+        }
+
+        #endregion
+
+        #region Click
+
+        /// <summary>
+        /// 열렸거나 본 카드를 좌클릭하면 Clicked로 분기 id를 알린다
+        /// </summary>
+        /// <remarks>
+        /// 잠긴 카드는 고를 수 없으므로 무시한다.
+        /// 분기도를 끌다가 손을 뗀 경우도 클릭으로 잡히지 않도록 드래그 중이었으면 무시한다
+        /// </remarks>
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button != PointerEventData.InputButton.Left || eventData.dragging)
+            {
+                return;
+            }
+
+            if (state == CardState.Locked)
+            {
+                return;
+            }
+
+            Clicked?.Invoke(id);
         }
 
         #endregion

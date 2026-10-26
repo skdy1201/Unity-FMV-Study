@@ -163,8 +163,22 @@ namespace FMV
             card.SetThumbnail(thumbnailConnect.GetThumbnail(info.Thumbnail), info.Title);
 
             card.SetState(GetCardState(id));
+            card.Clicked += SelectCard;
 
             return card;
+        }
+
+        /// <summary>
+        /// 고른 카드의 분기부터 영상을 시작하고 분기도를 숨긴다
+        /// </summary>
+        /// <remarks>
+        /// 잠긴 카드는 카드 쪽에서 걸러지므로 여기에는 열렸거나 본 분기 id만 온다
+        /// </remarks>
+        /// <param name="id"> 고른 카드의 분기 id </param>
+        private void SelectCard(string id)
+        {
+            cladogramUI.Hide();
+            gameController.GameEntry(id);
         }
 
         /// <summary>

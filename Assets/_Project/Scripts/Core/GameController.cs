@@ -142,6 +142,9 @@ namespace FMV
                 return;
             }
 
+            // 분기도에서 처음 들어올 때는 영상 화면이 숨겨져 있으므로 켠다. 분기를 넘어갈 때는 이미 켜져 있어 값만 다시 맞춘다
+            videoPlayerController.Show();
+
             List<(string id, VideoClip clip)> clips = new List<(string id, VideoClip clip)>
             {
                 (currentId, GetClipById(currentId))
