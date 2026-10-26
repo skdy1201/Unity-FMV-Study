@@ -127,7 +127,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FMV.CladogramCard
   id: 
-  thumbnail: {fileID: 0}
+  thumbnailImage: {fileID: 639198119345008303}
+  titleText: {fileID: 6740760037749955166}
 --- !u!1 &5052913077988165836
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,19 +1,24 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FMV
 {
     /// <summary>
-    /// 분기도에 놓이는 카드 한 장. 분기 id와 썸네일을 가진다
+    /// 분기도에 놓이는 카드 한 장. 분기 id를 가지고 썸네일과 제목을 띄운다
     /// </summary>
     /// <remarks>
-    /// 전개도를 코드로 생성할지, 씬에 배치해 둘지 정해지기 전이라 값은 setter로만 넣는다
+    /// 분기도가 코드로 생성한 뒤 setter로 값을 넣는다. 썸네일과 제목은 따로 들고 있지 않고 카드의 Image와 텍스트에 바로 띄운다
     /// </remarks>
     public class CladogramCard : MonoBehaviour
     {
         #region Serialized Fields
 
         [SerializeField] private string id;
-        [SerializeField] private Sprite thumbnail;
+
+        [Header("UI")]
+        [SerializeField] private Image thumbnailImage;
+        [SerializeField] private TMP_Text titleText;
 
         #endregion
 
@@ -28,11 +33,14 @@ namespace FMV
         }
 
         /// <summary>
-        /// 카드에 보일 썸네일을 정한다
+        /// 카드에 썸네일과 제목을 띄운다
         /// </summary>
-        public void SetThumbnail(Sprite thumbnail)
+        /// <param name="thumbnail"> 썸네일 Image에 띄울 Sprite </param>
+        /// <param name="title"> 제목 텍스트 </param>
+        public void SetThumbnail(Sprite thumbnail, string title)
         {
-            this.thumbnail = thumbnail;
+            thumbnailImage.sprite = thumbnail;
+            titleText.text = title;
         }
 
         #endregion

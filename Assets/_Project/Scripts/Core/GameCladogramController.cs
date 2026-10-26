@@ -124,7 +124,7 @@ namespace FMV
         }
 
         /// <summary>
-        /// 분기 id로 카드 정보와 썸네일을 찾아 카드 한 장을 만든다
+        /// 분기 id로 카드 정보와 썸네일을 찾아, 썸네일과 제목을 띄운 카드 한 장을 만든다
         /// </summary>
         /// <remarks>
         /// 생성은 CladogramUIController에 맡기고, 여기서는 데이터를 찾아 채운다. 위치는 BuildCladogram이 정한다
@@ -141,7 +141,7 @@ namespace FMV
 
             CladogramCard card = cladogramUI.CreateCard();
             card.SetId(id);
-            card.SetThumbnail(thumbnailConnect.GetThumbnail(info.Thumbnail));
+            card.SetThumbnail(thumbnailConnect.GetThumbnail(info.Thumbnail), info.Title);
 
             return card;
         }
