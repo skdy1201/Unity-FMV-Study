@@ -73,7 +73,6 @@ namespace FMV
         private void Start()
         {
             BindSaveData();
-            GameEntry();
         }
 
         private void Update()
@@ -100,7 +99,7 @@ namespace FMV
         /// </summary>
         /// <remarks>
         /// SaveController는 Awake에서 save.json을 불러오므로, 모든 Awake가 끝난 뒤인 Start에서 받아야 순서와 상관없이 기록이 준비되어 있다.
-        /// GameEntry가 기록을 쓰므로 그보다 먼저 부른다
+        /// 분기도가 GameEntry를 부르기 전에 기록이 준비되어 있도록, Start에서 가장 먼저 부른다
         /// </remarks>
         private void BindSaveData()
         {
@@ -111,14 +110,17 @@ namespace FMV
 
         #region Phase
 
-        private void GameEntry()
+        /// <summary>
+        /// 분기 id로 들어가, 그 분기 영상을 재생하고 다음 분기 클립을 미리 준비한다
+        /// </summary>
+        /// <remarks>
+        /// 처음 진입은 분기도가 고른 id로 밖에서 부르고, 이후 분기 이동은 ClipEnd가 다음 id로 부른다.
+        /// 들어간 id를 NewestGrade로 기록하므로, 어디서 부르든 GameState는 같은 방식으로 이어진다
+        /// </remarks>
+        /// <param name="currentId"> 들어갈 분기 id </param>
+        public void GameEntry(string currentId)
         {
-            Graph graph = gameData.Graph;
-
-            // 세이브가 없는 첫 실행이면 NewestGrade가 빈 문자열이므로 시작 분기부터 진행한다
-            string currentId = string.IsNullOrEmpty(gameState.NewestGrade) ? graph.Start.ID : gameState.NewestGrade;
-
-            Node current = graph.FindNode(currentId);
+            Node current = gameData.Graph.FindNode(currentId);
             if (current == null)
             {
                 Debug.LogError($"Node not found: {currentId}");
@@ -176,7 +178,7 @@ namespace FMV
 
             if (ending.IsFinal)
             {
-                // 빈 문자열이면 다음 실행 때 GameEntry가 시작 분기부터 진행한다
+                // 끝까지 봤으므로 이어 할 분기를 비워, 다음에는 시작 분기부터 진행하게 한다
                 gameState.UpdateGrade(string.Empty);
             }
             else
@@ -291,9 +293,8 @@ namespace FMV
                 return;
             }
 
-            gameState.UpdateGrade(nextId);
-
-            GameEntry();
+            // NewestGrade는 GameEntry가 들어가면서 바꾼다
+            GameEntry(nextId);
         }
 
         /// <summary>
