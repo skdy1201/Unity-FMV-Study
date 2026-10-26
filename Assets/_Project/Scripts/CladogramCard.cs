@@ -30,7 +30,7 @@ namespace FMV
 
         [Header("State")]
         [FormerlySerializedAs("visitedColor")]
-        [SerializeField] private Color watchedColor = Color.white;
+        [SerializeField] private Color watchedColor = new Color(0.9f, 0.35f, 0.3f, 1f);
 
         [Header("Hover")]
         [Tooltip("호버 중 가장 커졌을 때의 배율")]
@@ -45,9 +45,8 @@ namespace FMV
         private Coroutine hoverRoutine;
         private CardState state = CardState.Locked;
 
-        // 끝까지 보지 않은 카드는 프리팹에 정해 둔 원래 색을 그대로 쓴다
+        // 끝까지 보지 않은 카드의 프레임은 프리팹에 정해 둔 원래 색을 그대로 쓴다
         private Color frameOriginalColor;
-        private Color thumbnailOriginalColor;
 
         #endregion
 
@@ -65,7 +64,6 @@ namespace FMV
         private void Awake()
         {
             frameOriginalColor = frameImage.color;
-            thumbnailOriginalColor = thumbnailImage.color;
         }
 
         private void OnDisable()
@@ -98,10 +96,10 @@ namespace FMV
         }
 
         /// <summary>
-        /// 진행 상태에 맞게 카드를 띄운다. 본 카드는 본 색, 열린 카드는 원래 색, 잠긴 카드는 프레임·썸네일·제목을 가리고 자물쇠만 띄운다
+        /// 진행 상태에 맞게 카드를 띄운다. 본 카드는 프레임을 본 색으로, 열린 카드는 프레임 원래 색으로, 잠긴 카드는 프레임·썸네일·제목을 가리고 자물쇠만 띄운다
         /// </summary>
         /// <remarks>
-        /// Image 색은 원본 Sprite에 곱해지므로, 원래 색보다 밝게 보이려면 프리팹의 원래 색을 본 색보다 어둡게 둔다.
+        /// Image 색은 원본 Sprite에 곱해지므로, 흰색 프레임에 본 색을 곱해 테두리만 물들인다.
         /// 잠긴 카드도 자리는 그대로 두어 분기도의 모양은 보이게 한다
         /// </remarks>
         /// <param name="state"> save.json 기록으로 정한 카드 상태 </param>
@@ -118,8 +116,8 @@ namespace FMV
             titleText.enabled = !isLocked;
             lockImage.enabled = isLocked;
 
+            // 썸네일은 영상 장면이 그대로 보이도록 색을 입히지 않고, 프레임 색으로만 본 것을 구분한다
             frameImage.color = isWatched ? watchedColor : frameOriginalColor;
-            thumbnailImage.color = isWatched ? watchedColor : thumbnailOriginalColor;
         }
 
         #endregion

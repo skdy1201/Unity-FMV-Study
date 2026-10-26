@@ -59,7 +59,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -207,7 +207,7 @@ MonoBehaviour:
   thumbnailImage: {fileID: 639198119345008303}
   titleText: {fileID: 6740760037749955166}
   lockImage: {fileID: 6407916628897951622}
-  watchedColor: {r: 1, g: 1, b: 1, a: 1}
+  watchedColor: {r: 0.9, g: 0.35, b: 0.3, a: 1}
   hoverScale: 1.05
   hoverSpeed: 6
 --- !u!1 &5052913077988165836
