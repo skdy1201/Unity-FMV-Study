@@ -86,8 +86,18 @@ namespace FMV
         {
             BindSaveData();
 
-            // 씬에 들어오면 분기도가 먼저 나오므로, 분기를 고르기 전까지 영상 화면은 숨겨 둔다
-            videoPlayerController.Hide();
+            // 분기도로 들어오면 분기를 고르기 전까지 영상 화면은 숨겨 두고, 아니면 마지막으로 도달한 분기부터 바로 재생한다.
+            // 분기도도 자기 Start에서 같은 값을 보고 화면을 정하므로, 두 Start의 순서와 상관없이 결과가 같다
+            if (SceneChange.IsCladogramEntry)
+            {
+                videoPlayerController.Hide();
+            }
+            else
+            {
+                // 기록이 없으면 NewestGrade가 빈 문자열이므로 시작 분기로 들어간다
+                string entryId = string.IsNullOrEmpty(gameState.NewestGrade) ? Graph.Start.ID : gameState.NewestGrade;
+                GameEntry(entryId);
+            }
         }
 
         private void Update()

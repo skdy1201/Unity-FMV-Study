@@ -62,6 +62,12 @@ namespace FMV
             Dictionary<string, Vector2> positions = MakeLayout(graph);
             BuildLines(graph, positions);
             BuildCladogram();
+
+            // 바로 재생으로 들어와도 뒤로 가기에 쓰도록 분기도는 만들어 두고 화면만 숨긴다
+            if (!SceneChange.IsCladogramEntry)
+            {
+                cladogramUI.Hide();
+            }
         }
 
         private void OnDisable()

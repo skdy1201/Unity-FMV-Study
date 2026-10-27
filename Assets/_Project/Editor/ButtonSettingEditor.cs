@@ -71,7 +71,8 @@ namespace FMV
                 return true;
             }
 
-            return (ButtonType)buttonType.enumValueIndex == ButtonType.ChangeScene;
+            ButtonType type = GetButtonType();
+            return type == ButtonType.ChangePlay || type == ButtonType.ChangeCladogram;
         }
 
         private bool ShouldShowVisual()
@@ -82,7 +83,18 @@ namespace FMV
                 return true;
             }
 
-            return (ButtonType)buttonType.enumValueIndex == ButtonType.MediaPlay;
+            return GetButtonType() == ButtonType.MediaPlay;
+        }
+
+        /// <summary>
+        /// 직렬화된 버튼 타입 값을 enum으로 읽는다
+        /// </summary>
+        /// <remarks>
+        /// enumValueIndex는 선언 순서의 위치라, ButtonType처럼 값과 선언 순서가 다르면 다른 타입으로 읽힌다. 실제 값인 intValue를 쓴다
+        /// </remarks>
+        private ButtonType GetButtonType()
+        {
+            return (ButtonType)buttonType.intValue;
         }
 
         #endregion

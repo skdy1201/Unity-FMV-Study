@@ -7,9 +7,13 @@ namespace FMV
     /// <summary>
     /// 버튼 클릭 시 수행할 기능 종류
     /// </summary>
+    /// <remarks>
+    /// Unity는 enum을 숫자로 저장하므로 이미 쓰인 값은 바꾸지 않는다. 새 값은 비어 있는 숫자를 주고 소스에서만 관련 값 옆에 둔다
+    /// </remarks>
     public enum ButtonType
     {
-        ChangeScene = 0,
+        ChangePlay = 0,
+        ChangeCladogram = 5,
         Exit = 1,
         MediaPlay = 2,
         Select = 3,
@@ -134,8 +138,10 @@ namespace FMV
         {
             switch (buttonType)
             {
-                case ButtonType.ChangeScene:
+                case ButtonType.ChangePlay:
                     return () => SceneChange.ChangeScene(targetSceneName);
+                case ButtonType.ChangeCladogram:
+                    return () => SceneChange.ChangeScene(targetSceneName, isCladogramEntry: true);
                 case ButtonType.Exit:
                     return SceneChange.GameExit;
                 default:
