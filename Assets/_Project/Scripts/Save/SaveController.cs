@@ -110,8 +110,6 @@ namespace FMV
 
                 unlocked.Add(achievement.ID);
 
-                LogAchievement(achievement);
-
                 newlyUnlocked.Add(achievement);
             }
 
@@ -162,14 +160,6 @@ namespace FMV
             }
 
             return true;
-        }
-
-        /// <remarks>
-        /// 달성 팝업 UI를 붙이기 전에 판정 결과를 콘솔로 확인하기 위한 임시 출력
-        /// </remarks>
-        private void LogAchievement(AchievementDefinition achievement)
-        {
-            Debug.Log($"[Achievement] {achievement.Title}\n{achievement.Description}");
         }
 
         #endregion
