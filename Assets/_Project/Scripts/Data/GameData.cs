@@ -83,12 +83,6 @@ namespace FMV
             {
                 videoMapping[info.ID] = info.Clip;
             }
-
-            // DEBUG: 매핑 결과 확인용
-            foreach (KeyValuePair<string, string> pair in videoMapping)
-            {
-                Debug.Log($"{pair.Key} → {pair.Value}");
-            }
         }
 
         /// <summary>
