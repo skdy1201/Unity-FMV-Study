@@ -1,10 +1,10 @@
 {
   "cards": [
     { "id": "1",  "thumbnail": "1_RedcrownWoods_Intro",          "title": "붉은 왕관 숲" },
-    { "id": "2",  "thumbnail": "2_Bargainburg_Choice",           "title": "바게인버그의 갈림길" },
+    { "id": "2",  "thumbnail": "2_Bargainburg_Choice",           "title": "바겐버그의 갈림길" },
     { "id": "2a", "thumbnail": "2a_Bargainburg_FailToStart",     "title": "출발 실패" },
-    { "id": "2b", "thumbnail": "2b_Bargainburg_Success",         "title": "바게인버그 성공" },
-    { "id": "2c", "thumbnail": "2c_Bargainburg_Middle",          "title": "바게인버그 중간" },
+    { "id": "2b", "thumbnail": "2b_Bargainburg_Success",         "title": "바겐버그 성공" },
+    { "id": "2c", "thumbnail": "2c_Bargainburg_Middle",          "title": "바겐버그 중간" },
     { "id": "3",  "thumbnail": "3_BlueRuin_QTEStart",            "title": "푸른 폐허" },
     { "id": "3a", "thumbnail": "3a_BlueRuin_QTEFail_ChapelFall", "title": "예배당 추락" },
     { "id": "3b", "thumbnail": "3b_BlueRuin_QTESuccess",         "title": "푸른 폐허 돌파" },
