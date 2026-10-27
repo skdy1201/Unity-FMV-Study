@@ -56,14 +56,9 @@ namespace FMV
 
         private void Start()
         {
-            Graph graph = gameController.Graph;
+            DrawCladogram();
 
-            // 선이 카드 뒤에 깔리도록 선을 먼저 만든다
-            Dictionary<string, Vector2> positions = MakeLayout(graph);
-            BuildLines(graph, positions);
-            BuildCladogram();
-
-            gameController.OnBackToCladogram += cladogramUI.Show;
+            gameController.OnBackToCladogram += ShowCladogram;
             cladogramUI.BindBack(() => SceneChange.ChangeScene("MainMenuScene"));
 
             // 바로 재생으로 들어와도 뒤로 가기에 쓰도록 분기도는 만들어 두고 화면만 숨긴다
@@ -94,6 +89,33 @@ namespace FMV
         private void SpawnCladogramUI()
         {
             cladogramUI = Instantiate(cladogramUIPrefab);
+        }
+
+        /// <summary>
+        /// 카드 영역을 비우고, 지금 기록으로 선과 카드를 다시 그린다
+        /// </summary>
+        /// <remarks>
+        /// 카드 상태와 선의 열림은 그릴 때 한 번 정해지므로, 기록이 바뀐 뒤 분기도를 다시 보일 때마다 부른다
+        /// </remarks>
+        private void DrawCladogram()
+        {
+            Graph graph = gameController.Graph;
+
+            cladogramUI.ClearContent();
+
+            // 선이 카드 뒤에 깔리도록 선을 먼저 만든다
+            Dictionary<string, Vector2> positions = MakeLayout(graph);
+            BuildLines(graph, positions);
+            BuildCladogram();
+        }
+
+        /// <summary>
+        /// 영상에서 뒤로 돌아오면, 그동안 바뀐 기록으로 분기도를 다시 그려 보인다
+        /// </summary>
+        private void ShowCladogram()
+        {
+            DrawCladogram();
+            cladogramUI.Show();
         }
 
         #endregion

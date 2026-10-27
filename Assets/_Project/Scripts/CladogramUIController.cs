@@ -111,6 +111,22 @@ namespace FMV
         #region Card
 
         /// <summary>
+        /// 카드 영역(Content) 아래의 카드·선·joint를 모두 지운다
+        /// </summary>
+        /// <remarks>
+        /// 진행 기록이 바뀐 뒤 분기도를 다시 그리기 전에 부른다.
+        /// Destroy는 프레임 끝에 지우므로, 같은 프레임에 새로 만든 카드·선이 그 뒤에 붙어도 그리는 순서는 유지된다.
+        /// cardContent 자체는 남기므로 드래그 위치와 확대 배율은 그대로다
+        /// </remarks>
+        public void ClearContent()
+        {
+            foreach (Transform child in cardContent)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        /// <summary>
         /// 카드 프리팹을 카드 영역(Content) 아래에 생성한다
         /// </summary>
         /// <remarks>
