@@ -22,6 +22,8 @@ namespace FMV
         // 올라갔다 내려오기까지 걸리는 전체 시간(초). 절반은 올라가고 절반은 내려온다
         [SerializeField] private float popupDuration = 2f;
 
+        [SerializeField] private UISound popupSound;
+
         #endregion
 
         #region Private Fields
@@ -90,13 +92,20 @@ namespace FMV
         /// <param name="sprite"> 팝업에 띄울 업적 이미지 </param>
         /// <returns> 팝업이 끝날 때까지 기다릴 수 있도록 실행 중인 코루틴을 돌려준다 (yield return으로 대기) </returns>
         /// <remarks>
-        /// 앞 팝업이 떠 있는 동안 다시 부르면, 새 슬롯은 떠 있는 슬롯 수만큼 위에 멈춰 겹치지 않는다
+        /// 앞 팝업이 떠 있는 동안 다시 부르면, 새 슬롯은 떠 있는 슬롯 수만큼 위에 멈춰 겹치지 않는다.
+        /// 소리는 떠 있는 팝업이 없을 때 올라오는 첫 슬롯만 낸다
         /// </remarks>
         public Coroutine Popup(Sprite sprite)
         {
             Image slot = Instantiate(popupImage, popupImage.transform.parent);
             slot.sprite = sprite;
             slot.gameObject.SetActive(true);
+
+            // 여러 업적이 짧은 간격으로 열리면 같은 소리가 겹쳐 지저분해지므로, 한 묶음에 한 번만 낸다
+            if (activeCount == 0)
+            {
+                popupSound.Play();
+            }
 
             int stackIndex = activeCount;
             activeCount++;
