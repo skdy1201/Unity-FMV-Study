@@ -38,6 +38,11 @@ namespace FMV
         [Tooltip("커졌다 작아지는 속도")]
         [SerializeField] private float hoverSpeed = 6f;
 
+        [Header("Sound")]
+        [SerializeField] private UISound cardSound;
+        [SerializeField] private AudioClip clickClip;
+        [SerializeField] private AudioClip lockedClip;
+
         #endregion
 
         #region Private Fields
@@ -128,8 +133,9 @@ namespace FMV
         /// 열렸거나 본 카드를 좌클릭하면 Clicked로 분기 id를 알린다
         /// </summary>
         /// <remarks>
-        /// 잠긴 카드는 고를 수 없으므로 무시한다.
-        /// 분기도를 끌다가 손을 뗀 경우도 클릭으로 잡히지 않도록 드래그 중이었으면 무시한다
+        /// 잠긴 카드는 고를 수 없으므로 잠김 소리만 내고 무시한다.
+        /// 분기도를 끌다가 손을 뗀 경우도 클릭으로 잡히지 않도록 드래그 중이었으면 무시한다.
+        /// 클릭 소리는 분기도가 숨겨진 뒤에도 이어진다. 분기도는 CanvasGroup으로 숨기기만 하고 카드 오브젝트는 남기 때문이다
         /// </remarks>
         public void OnPointerClick(PointerEventData eventData)
         {
@@ -140,9 +146,11 @@ namespace FMV
 
             if (state == CardState.Locked)
             {
+                cardSound.Play(lockedClip);
                 return;
             }
 
+            cardSound.Play(clickClip);
             Clicked?.Invoke(id);
         }
 
@@ -154,10 +162,17 @@ namespace FMV
         /// 마우스가 올라오면 크기가 커졌다 작아지는 연출을 시작한다
         /// </summary>
         /// <remarks>
-        /// 그리는 순서는 바꾸지 않으므로, 커져도 옆 카드와 겹치지 않게 분기도의 카드 간격을 넉넉히 둔다
+        /// 그리는 순서는 바꾸지 않으므로, 커져도 옆 카드와 겹치지 않게 분기도의 카드 간격을 넉넉히 둔다.
+        /// 잠긴 카드는 고를 수 없어 눌릴 것처럼 보이면 안 되므로 연출하지 않는다.
+        /// 잠김 소리를 내려고 자물쇠 Image가 레이캐스트를 받으므로 호버도 들어오기 때문에 여기서 거른다
         /// </remarks>
         public void OnPointerEnter(PointerEventData eventData)
         {
+            if (state == CardState.Locked)
+            {
+                return;
+            }
+
             StopHover();
             hoverRoutine = StartCoroutine(HoverPulse());
         }
