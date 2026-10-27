@@ -434,11 +434,18 @@ namespace FMV
         /// </summary>
         /// <remarks>
         /// Hide가 영상을 Stop하므로 따로 멈추지 않는다. 다음 카드를 고르면 GameEntry가 그 분기 클립을 처음부터 재생한다.
-        /// 미디어 버튼은 영상 화면과 다른 UI라 함께 숨기지 않으면 분기도 위에 남는다
+        /// 미디어 버튼은 영상 화면과 다른 UI라 함께 숨기지 않으면 분기도 위에 남는다.
+        /// 일시정지로 바뀐 버튼 이미지도 되돌려, 다시 들어가 재생될 때 이미지와 재생 상태가 맞게 한다
         /// </remarks>
         private void BackToCladogram()
         {
             SetMediaVisible(false);
+
+            foreach (ButtonVisual visual in mediaVisuals)
+            {
+                visual.ResetImage();
+            }
+
             videoPlayerController.Hide();
 
             OnBackToCladogram?.Invoke();

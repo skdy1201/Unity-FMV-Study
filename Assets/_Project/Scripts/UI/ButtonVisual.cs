@@ -35,6 +35,7 @@ namespace FMV
         #region Private Fields
 
         private Button unityButton;
+        private Sprite defaultSprite;
         private bool isVisible = false;
 
         #endregion
@@ -49,6 +50,9 @@ namespace FMV
             }
 
             unityButton = GetComponent<Button>();
+
+            // ChangeImage로 바뀌기 전의 처음 이미지를 ResetImage가 되돌릴 기준으로 둔다
+            defaultSprite = buttonImage.sprite;
 
             ApplyVisible();
         }
@@ -102,6 +106,17 @@ namespace FMV
                     return;
                 }
             }
+        }
+
+        /// <summary>
+        /// ChangeImage로 바꾼 이미지를 처음 이미지로 되돌린다
+        /// </summary>
+        /// <remarks>
+        /// spriteChain의 순서는 처음 이미지와 상관없으므로, Awake에서 기억해 둔 스프라이트로 되돌린다
+        /// </remarks>
+        public void ResetImage()
+        {
+            buttonImage.sprite = defaultSprite;
         }
 
         /// <remarks>
