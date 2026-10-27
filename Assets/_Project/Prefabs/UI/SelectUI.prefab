@@ -237,6 +237,10 @@ PrefabInstance:
       propertyPath: buttonType
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2418960479164349638, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: uiSound
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5261347079840214655, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -419,6 +423,10 @@ PrefabInstance:
       propertyPath: buttonType
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2418960479164349638, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: uiSound
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5261347079840214655, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -600,6 +608,10 @@ PrefabInstance:
     - target: {fileID: 2418960479164349638, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
       propertyPath: buttonType
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2418960479164349638, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
+      propertyPath: uiSound
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5261347079840214655, guid: a6a7fe0d06df0ca4a80bf837d4ecf27b, type: 3}
       propertyPath: m_Pivot.x

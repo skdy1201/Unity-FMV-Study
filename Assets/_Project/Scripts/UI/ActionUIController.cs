@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace FMV
@@ -18,6 +19,14 @@ namespace FMV
         // DEBUG: 런타임에 SetSelectUI로 등록되는지 Inspector에서 확인하려고 노출한다
         [SerializeField] private CanvasGroup selectUIGroup;
 
+        [Header("Sound")]
+        [SerializeField] private UISound actionSound;
+        [SerializeField] private AudioClip appearClip;
+        [SerializeField] private AudioClip selectClip;
+        [SerializeField] private AudioClip qteSuccessClip;
+        [SerializeField] private AudioClip qteFailClip;
+        [SerializeField] private AudioClip qteTimeOutClip;
+
         #endregion
 
         #region Private Fields
@@ -32,6 +41,14 @@ namespace FMV
         #endregion
 
         #region Events
+
+        /// <summary>
+        /// 선택·QTE 판정·시간 초과로 결과가 정해지면, 결과 소리를 기다리기 전에 호출된다
+        /// </summary>
+        /// <remarks>
+        /// 결과 알림은 소리가 끝난 뒤에 오므로, 그사이 영상을 멈추는 일처럼 결과가 정해진 순간에 할 일은 구독한 쪽이 여기서 한다
+        /// </remarks>
+        public event Action OnResultDecided;
 
         /// <summary>
         /// 선택지를 고르면, 선택지 UI를 숨긴 뒤 그 선택지의 결과를 넘겨 호출된다
@@ -73,6 +90,7 @@ namespace FMV
             selectUIView.SetOptions(options);
 
             SetGroupVisible(selectUIGroup, true);
+            actionSound.Play(appearClip);
         }
 
         /// <summary>
@@ -84,12 +102,15 @@ namespace FMV
         }
 
         /// <remarks>
-        /// 숨기기를 먼저 해서 interactable을 꺼, 같은 선택지 UI에서 두 번 눌려 결과가 두 번 넘어가지 않게 한다
+        /// 숨기기를 먼저 해서 interactable을 꺼, 같은 선택지 UI에서 두 번 눌려 결과가 두 번 넘어가지 않게 한다.
+        /// 선택 소리가 끝난 뒤에 결과를 알려 다음 분기로 넘어간다
         /// </remarks>
         private void SelectOption(NodeResult result)
         {
             ClearSelectUI();
-            OptionSelected?.Invoke(result);
+            OnResultDecided?.Invoke();
+
+            StartCoroutine(PlaySoundThen(selectClip, () => OptionSelected?.Invoke(result)));
         }
 
         #endregion
@@ -117,6 +138,7 @@ namespace FMV
 
             isQTEActive = true;
             SetGroupVisible(qteUIGroup, true);
+            actionSound.Play(appearClip);
         }
 
         /// <summary>
@@ -132,14 +154,23 @@ namespace FMV
         /// 지금 타이밍 원의 크기로 QTE를 판정하고, QTE UI를 숨긴 뒤 결과를 알린다
         /// </summary>
         /// <remarks>
-        /// 선택지와 같이 숨기기를 먼저 해서, 결과를 받은 쪽이 다음 분기로 넘어갈 때 QTE UI가 남아 있지 않게 한다
+        /// 선택지와 같이 숨기기를 먼저 해서, 결과를 받은 쪽이 다음 분기로 넘어갈 때 QTE UI가 남아 있지 않게 한다.
+        /// 결과 소리가 끝날 때까지 Action 단계가 이어져 그사이 화면 클릭으로 다시 불릴 수 있으므로, QTE가 꺼진 뒤의 호출은 무시한다
         /// </remarks>
         public void CheckQTE()
         {
+            if (!isQTEActive)
+            {
+                return;
+            }
+
             bool isSuccess = qteUIView.CheckQTE();
 
             ClearQTEUI();
-            OnQTEChecked?.Invoke(isSuccess);
+            OnResultDecided?.Invoke();
+
+            AudioClip resultClip = isSuccess ? qteSuccessClip : qteFailClip;
+            StartCoroutine(PlaySoundThen(resultClip, () => OnQTEChecked?.Invoke(isSuccess)));
         }
 
         /// <remarks>
@@ -153,7 +184,34 @@ namespace FMV
             }
 
             ClearQTEUI();
-            OnQTETimeOut?.Invoke();
+            OnResultDecided?.Invoke();
+
+            StartCoroutine(PlaySoundThen(qteTimeOutClip, () => OnQTETimeOut?.Invoke()));
+        }
+
+        #endregion
+
+        #region Sound
+
+        /// <summary>
+        /// 결과 소리를 재생하고, 소리가 끝나면 결과를 알린다
+        /// </summary>
+        /// <remarks>
+        /// 결과를 바로 알리면 다음 분기로 넘어가며 소리가 묻히므로, 클립 길이만큼 기다린 뒤 알린다.
+        /// 클립이 비어 있으면 기다리지 않고 바로 알린다
+        /// </remarks>
+        /// <param name="clip"> 재생할 결과 소리 </param>
+        /// <param name="onSoundEnd"> 소리가 끝나면 호출할 결과 알림 </param>
+        private IEnumerator PlaySoundThen(AudioClip clip, Action onSoundEnd)
+        {
+            if (clip != null)
+            {
+                actionSound.Play(clip);
+
+                yield return new WaitForSeconds(clip.length);
+            }
+
+            onSoundEnd?.Invoke();
         }
 
         #endregion

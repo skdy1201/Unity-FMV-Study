@@ -40,18 +40,28 @@ namespace FMV
         /// <summary>
         /// 지정한 효과음을 한 번 재생한다
         /// </summary>
+        public void Play()
+        {
+            Play(clip);
+        }
+
+        /// <summary>
+        /// 넘겨받은 효과음을 한 번 재생한다
+        /// </summary>
         /// <remarks>
+        /// 결과마다 소리가 다른 ActionUIController처럼 클립을 여러 개 쓰는 곳에서 부른다.
         /// PlayOneShot은 앞 소리를 끊지 않고 겹쳐 재생하므로, 빠르게 연속으로 눌러도 소리가 잘리지 않는다.
         /// clip이 비어 있으면 PlayOneShot이 에러를 내므로 아무것도 하지 않는다
         /// </remarks>
-        public void Play()
+        /// <param name="playClip"> 재생할 효과음 </param>
+        public void Play(AudioClip playClip)
         {
-            if (clip == null)
+            if (playClip == null)
             {
                 return;
             }
 
-            audioSource.PlayOneShot(clip);
+            audioSource.PlayOneShot(playClip);
         }
 
         #endregion

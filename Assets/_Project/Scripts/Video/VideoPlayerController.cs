@@ -246,6 +246,18 @@ namespace FMV
         }
 
         /// <summary>
+        /// 현재 플레이어를 상태와 상관없이 일시정지
+        /// </summary>
+        /// <remarks>
+        /// RenewPlay는 지금 상태를 뒤집으므로, 반드시 멈춰야 할 때는 이걸 쓴다.
+        /// 다시 재생은 따로 부르지 않아도 다음 분기의 PlayClip이 맡는다
+        /// </remarks>
+        public void Pause()
+        {
+            videoPlayers[playIndex].Pause();
+        }
+
+        /// <summary>
         /// 재생 속도 변경. 이후 재생하는 클립에도 유지된다
         /// </summary>
         /// <param name="speed"> 재생 배속 </param>

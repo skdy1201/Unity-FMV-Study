@@ -467,6 +467,9 @@ namespace FMV
             actionUIController.SetQTEUI(qteUI);
             actionUIController.OnQTEChecked += QTEChecked;
             actionUIController.OnQTETimeOut += QTETimeOut;
+
+            // 결과 소리를 기다리는 동안 영상이 끝나면 ClipEnd(Finished)가 불려 없는 분기로 넘어가므로, 결과가 정해지면 영상을 멈춘다
+            actionUIController.OnResultDecided += videoPlayerController.Pause;
         }
 
         /// <summary>
