@@ -27,6 +27,9 @@ namespace FMV
         [SerializeField] private Image buttonImage;
         [SerializeField] private List<SpritePair> spriteChain = new List<SpritePair>();
 
+        // 표시 여부만 쓰는 버튼(뒤로 가기 등)은 꺼서, spriteChain이 채워져 있어도 이미지를 바꾸지 않게 한다
+        [SerializeField] private bool canChangeImage = true;
+
         #endregion
 
         #region Private Fields
@@ -81,8 +84,16 @@ namespace FMV
         /// <summary>
         /// 현재 스프라이트와 일치하는 쌍을 찾아 다음 스프라이트로 교체한다
         /// </summary>
+        /// <remarks>
+        /// canChangeImage가 꺼져 있으면 아무것도 바꾸지 않는다
+        /// </remarks>
         public void ChangeImage()
         {
+            if (!canChangeImage)
+            {
+                return;
+            }
+
             foreach (SpritePair pair in spriteChain)
             {
                 if (buttonImage.sprite == pair.from)
