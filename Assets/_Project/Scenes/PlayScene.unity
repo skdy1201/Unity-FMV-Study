@@ -277,6 +277,73 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1290837210
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1290837214}
+  - component: {fileID: 1290837215}
+  m_Layer: 5
+  m_Name: CladogramController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1290837214
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290837210}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 960, y: 540}
+  m_SizeDelta: {x: 1920, y: 1080}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1290837215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1290837210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1ff4fb74f252c34e8acb8719c4fabe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FMV.GameCladogramController
+  cladogramData:
+    cardJson: {fileID: 4900000, guid: d40ae245847049359c091f8fd4fd99b5, type: 3}
+  thumbnailConnect:
+    thumbnails:
+    - {fileID: 21300000, guid: d8215d5e4ba518c47963644942899329, type: 3}
+    - {fileID: 21300000, guid: a6f6374ab3745d44da7634bdb7347d58, type: 3}
+    - {fileID: 21300000, guid: 9ed5ddba62fc1294e8749193d8a65b44, type: 3}
+    - {fileID: 21300000, guid: c21f30ce13e4c8e448644ce7fa88c4e3, type: 3}
+    - {fileID: 21300000, guid: 36ff6a0e5e95f5045a0c12d3dcb04eb3, type: 3}
+    - {fileID: 21300000, guid: 2f9a8ac6465365e4f90bda28edfe363d, type: 3}
+    - {fileID: 21300000, guid: b21fb1b9cdaedec4db9b27023de53568, type: 3}
+    - {fileID: 21300000, guid: 96991c6e1877e7c459158dc5ac2cc567, type: 3}
+    - {fileID: 21300000, guid: 684d6c91f8e647e4a960f3e2bb8aeb7f, type: 3}
+    - {fileID: 21300000, guid: d47d3297fb000fb46a493303e0d4ff90, type: 3}
+    - {fileID: 21300000, guid: 9a2a8debb39fbc441acf5be7c8f8b85d, type: 3}
+  gameController: {fileID: 288466304825214800}
+  saveController: {fileID: 255178394}
+  cladogramUIPrefab: {fileID: 5984406369062626401, guid: 76145682e65afa945981cfdda148d753, type: 3}
+  cardSpacing: {x: 600, y: 500}
 --- !u!1 &1553028726
 GameObject:
   m_ObjectHideFlags: 0
@@ -682,6 +749,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
+--- !u!114 &288466304825214800 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 329930262127566388, guid: bd9fa74b583a4344bb1c79093377bb92, type: 3}
+  m_PrefabInstance: {fileID: 288466304825214799}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5be632ecb924b4a8aa4cbeef8df52b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameController
 --- !u!1001 &6404863907894371350
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -789,3 +867,4 @@ SceneRoots:
   - {fileID: 1912110608}
   - {fileID: 6404863907894371350}
   - {fileID: 255178393}
+  - {fileID: 1290837214}
