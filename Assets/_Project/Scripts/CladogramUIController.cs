@@ -32,6 +32,8 @@ namespace FMV
         [SerializeField] private Sprite lockedLineSprite;
         [SerializeField] private Sprite jointSprite;
         [SerializeField] private float lineThickness = 25f;
+        [Tooltip("꺾이는 점에 놓는 joint의 가로·세로 크기")]
+        [SerializeField] private float jointSize = 40f;
 
         [Header("Zoom")]
         [Tooltip("휠 한 칸에 바뀌는 배율")]
@@ -130,6 +132,30 @@ namespace FMV
             rect.anchoredPosition = (start + end) * 0.5f;
             rect.sizeDelta = new Vector2(direction.magnitude, lineThickness);
             rect.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
+
+            return image;
+        }
+
+        /// <summary>
+        /// 선이 꺾이는 점에 joint 하나를 cardContent 아래에 만든다
+        /// </summary>
+        /// <remarks>
+        /// 가로·세로 조각이 만나는 모서리를 덮으므로, 선보다 나중에·카드보다 먼저 만든다
+        /// </remarks>
+        /// <param name="position"> 꺾이는 점 (cardContent 기준 좌표) </param>
+        /// <returns> 만든 joint Image </returns>
+        public Image CreateJoint(Vector2 position)
+        {
+            GameObject joint = new GameObject("Joint", typeof(RectTransform), typeof(Image));
+            joint.transform.SetParent(cardContent, false);
+
+            Image image = joint.GetComponent<Image>();
+            image.sprite = jointSprite;
+            image.raycastTarget = false;
+
+            RectTransform rect = (RectTransform)joint.transform;
+            rect.anchoredPosition = position;
+            rect.sizeDelta = new Vector2(jointSize, jointSize);
 
             return image;
         }
