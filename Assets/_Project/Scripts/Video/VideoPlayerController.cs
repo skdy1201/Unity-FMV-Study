@@ -33,9 +33,6 @@ namespace FMV
         private float playSpeed = 1f;
         private Vector2 loop = Vector2.zero;
 
-        // Hide가 멈춘 영상만 Show에서 다시 재생하기 위한 표시
-        private bool isPausedByHide = false;
-
         private Coroutine loopRoutine;
         private Coroutine actionRoutine;
 
@@ -98,39 +95,31 @@ namespace FMV
         #region IUIVisible
 
         /// <summary>
-        /// 영상 화면을 보이고 입력을 받게 한다. Hide가 멈춘 영상이면 이어서 재생한다
+        /// 영상 화면을 보이고 입력을 받게 한다
         /// </summary>
         /// <remarks>
-        /// 숨기기 전에 이미 멈춰 있던 영상은 그대로 둔다
+        /// 화면만 켜고 재생은 하지 않는다. 재생은 Show 뒤에 PlayClip으로 시작한다
         /// </remarks>
         public void Show()
         {
             SetGroupVisible(true);
-
-            if (isPausedByHide)
-            {
-                isPausedByHide = false;
-                videoPlayers[playIndex].Play();
-            }
         }
 
         /// <summary>
-        /// 영상 화면을 숨기고 입력을 막는다. 재생 중이던 영상은 일시정지한다
+        /// 영상 화면을 숨기고 입력을 막는다. 현재 플레이어는 Stop으로 처음으로 되돌린다
         /// </summary>
         /// <remarks>
-        /// 오브젝트를 끄지 않으므로 준비해 둔 클립과 구간 반복·Action 대기는 그대로 남는다.
-        /// 숨긴 상태에서 다시 불려도 이미 멈춰 있으므로 표시를 덮어쓰지 않는다
+        /// 숨기는 건 분기도로 나갈 때라, 같은 분기를 다시 고르면 처음부터 재생되어야 한다.
+        /// PlayClip은 같은 슬롯이면 Stop 없이 Play만 하므로, 일시정지로 두면 멈춘 시점부터 이어진다.
+        /// 재생 버튼으로 일시정지해 둔 영상도 되돌려야 하므로 재생 중인지와 상관없이 Stop한다.
+        /// Stop은 준비 상태도 해제하므로 같은 클립을 다시 재생하면 Prepare부터 한다.
+        /// 구간 반복·Action 대기는 다음 PlayClip이 해제한다
         /// </remarks>
         public void Hide()
         {
             SetGroupVisible(false);
 
-            VideoPlayer player = videoPlayers[playIndex];
-            if (player.isPlaying)
-            {
-                player.Pause();
-                isPausedByHide = true;
-            }
+            videoPlayers[playIndex].Stop();
         }
 
         #endregion

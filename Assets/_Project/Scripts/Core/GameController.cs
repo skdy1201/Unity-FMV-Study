@@ -46,7 +46,7 @@ namespace FMV
         // 이번 씬에서 들어간 엔딩. 엔딩에 들어가면 NewestGrade가 엔딩 뒤 시작 위치로 바뀌므로, 엔딩 영상이 끝났는지는 이 값으로 안다.
         // 엔딩 뒤에는 씬이 바뀌므로 한 번 들어가면 비우지 않는다
         private JsonEndingInfo currentEnding;
-        private ButtonVisual mediaVisual;
+        private List<ButtonVisual> mediaVisuals = new List<ButtonVisual>();
         private List<ISetting> interfaceList;
 
         #endregion
@@ -60,6 +60,18 @@ namespace FMV
         /// GameData가 Awake에서 만들므로 다른 오브젝트는 Start 이후에 받는다
         /// </remarks>
         public Graph Graph => gameData.Graph;
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// 영상 화면에서 뒤로 가기를 누르면, 영상을 숨긴 뒤 호출된다
+        /// </summary>
+        /// <remarks>
+        /// 분기도 화면은 GameCladogramController가 들고 있으므로, 분기도를 보이는 일은 구독한 쪽이 한다
+        /// </remarks>
+        public event Action OnBackToCladogram;
 
         #endregion
 
@@ -244,8 +256,8 @@ namespace FMV
                 videoPlayerController.SetLoopTime(new Vector2(timing.LoopStart, timing.LoopEnd), speed);
             }
 
-            // Play 단계에서 켜 둔 미디어 버튼이 Action 중에도 눌려 영상을 멈추지 않도록 숨긴다
-            mediaVisual.SetVisible(false);
+            // Play 단계에서 켜 둔 미디어 버튼이 Action 중에도 눌려 영상을 멈추거나 분기도로 나가지 않도록 숨긴다
+            SetMediaVisible(false);
 
             switch (info.Type)
             {
@@ -376,24 +388,60 @@ namespace FMV
         #region UI
 
         /// <summary>
-        /// MediaInteractUI 프리팹을 생성하고, 버튼 클릭을 영상 재생/일시정지에 연결한다
+        /// MediaInteractUI 프리팹을 생성하고, 버튼 타입에 따라 재생/일시정지와 뒤로 가기에 연결한다
         /// </summary>
         /// <remarks>
-        /// 프리팹은 씬의 VideoPlayerController를 Inspector에서 참조할 수 없으므로, 생성한 뒤 코드로 연결한다
+        /// 프리팹은 씬의 VideoPlayerController를 Inspector에서 참조할 수 없으므로, 생성한 뒤 코드로 연결한다.
+        /// 미디어 버튼은 화면 클릭과 Action 진입에 함께 보이고 숨겨지므로, ButtonVisual을 모두 모아 둔다
         /// </remarks>
         private void ConnectMediaButton()
         {
             GameObject ui = Instantiate(mediaInteractUI);
-            ButtonSetting playButton = ui.GetComponentInChildren<ButtonSetting>();
 
-            if (playButton.ButtonType != ButtonType.MediaPlay)
+            foreach (ButtonSetting button in ui.GetComponentsInChildren<ButtonSetting>())
             {
-                Debug.LogError($"Not Match {ButtonType.MediaPlay} Button Type");
-                return;
+                switch (button.ButtonType)
+                {
+                    case ButtonType.MediaPlay:
+                        button.Bind(videoPlayerController.RenewPlay);
+                        break;
+                    case ButtonType.Back:
+                        button.Bind(BackToCladogram);
+                        break;
+                    default:
+                        Debug.LogError($"Not Match Media Button Type: {button.name}");
+                        break;
+                }
             }
 
-            playButton.Bind(videoPlayerController.RenewPlay);
-            mediaVisual = ui.GetComponentInChildren<ButtonVisual>();
+            mediaVisuals.AddRange(ui.GetComponentsInChildren<ButtonVisual>());
+        }
+
+        /// <summary>
+        /// 미디어 버튼을 모두 지정한 상태로 보이거나 숨긴다
+        /// </summary>
+        /// <param name="visible"> 보이게 하려면 true </param>
+        private void SetMediaVisible(bool visible)
+        {
+            foreach (ButtonVisual visual in mediaVisuals)
+            {
+                visual.SetVisible(visible);
+            }
+        }
+
+        /// <summary>
+        /// 영상과 미디어 버튼을 숨기고 분기도로 돌아간다
+        /// </summary>
+        /// <remarks>
+        /// Hide가 영상을 Stop하므로 따로 멈추지 않는다. 다음 카드를 고르면 GameEntry가 그 분기 클립을 처음부터 재생한다.
+        /// 미디어 버튼은 영상 화면과 다른 UI라 함께 숨기지 않으면 분기도 위에 남는다
+        /// </remarks>
+        private void BackToCladogram()
+        {
+            SetMediaVisible(false);
+            videoPlayerController.Hide();
+
+            OnBackToCladogram?.Invoke();
         }
 
         /// <summary>
@@ -435,7 +483,7 @@ namespace FMV
         /// </remarks>
         private void HandleInput()
         {
-            if (mediaVisual == null)
+            if (mediaVisuals.Count == 0)
             {
                 return;
             }
@@ -450,7 +498,10 @@ namespace FMV
             {
                 if (gameState.GamePhase.Current == PhaseState.Play)
                 {
-                    mediaVisual.ToggleVisible();
+                    foreach (ButtonVisual visual in mediaVisuals)
+                    {
+                        visual.ToggleVisible();
+                    }
                 }
                 else if (gameState.GamePhase.Current == PhaseState.Action)
                 {

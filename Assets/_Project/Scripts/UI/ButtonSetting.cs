@@ -18,6 +18,7 @@ namespace FMV
         MediaPlay = 2,
         Select = 3,
         MainMenuInteract = 4,
+        Back = 6,
     }
 
     /// <summary>
