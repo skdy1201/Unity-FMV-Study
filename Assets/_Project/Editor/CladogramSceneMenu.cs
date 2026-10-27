@@ -20,8 +20,8 @@ namespace FMV
 
         private const string ScenePath = "Assets/_Project/Scenes/Dev/CladogramScene.unity";
         private const string VideoJsonPath = "Assets/_Project/Data/Json/videos.json";
-        private const string BranchImageFolder = "Assets/_Project/Data/Image/branch";
-        private const string ThumbnailFolder = "Assets/_Project/Data/Image/thumbnail";
+        private const string BranchImageFolder = "Assets/_Project/Data/Image/Branch";
+        private const string ThumbnailFolder = "Assets/_Project/Data/Image/Thumbnail";
         private const string FontPath = "Assets/_Project/Fonts/Galmuri/Galmuri11 SDF.asset";
 
         private const float DepthSpacing = 4f;
