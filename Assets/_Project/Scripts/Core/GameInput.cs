@@ -1,5 +1,5 @@
-using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace FMV
 {
@@ -7,8 +7,7 @@ namespace FMV
     /// 이번 프레임의 입력 여부를 돌려준다
     /// </summary>
     /// <remarks>
-    /// 입력에 따라 무엇을 할지는 GameController가 단계를 보고 정하고, 여기서는 값만 돌려준다.
-    /// TODO: 마감 전에 구형 Input을 신규 Input System으로 교체
+    /// 입력에 따라 무엇을 할지는 GameController가 단계를 보고 정하고, 여기서는 값만 돌려준다
     /// </remarks>
     public class GameInput
     {
@@ -22,7 +21,8 @@ namespace FMV
         /// </remarks>
         public bool IsScreenClicked()
         {
-            if (!Input.GetMouseButtonDown(0))
+            Mouse mouse = Mouse.current;
+            if (mouse == null || !mouse.leftButton.wasPressedThisFrame)
             {
                 return false;
             }
