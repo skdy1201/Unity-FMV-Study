@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace FMV
@@ -19,6 +20,7 @@ namespace FMV
         Select = 3,
         MainMenuInteract = 4,
         Back = 6,
+        ResetSave = 7,
     }
 
     /// <summary>
@@ -145,9 +147,24 @@ namespace FMV
                     return () => SceneChange.ChangeScene(targetSceneName, isCladogramEntry: true);
                 case ButtonType.Exit:
                     return SceneChange.GameExit;
+                case ButtonType.ResetSave:
+                    return ResetSave;
                 default:
                     return null;
             }
+        }
+
+        /// <summary>
+        /// save.json을 지우고 지금 씬을 다시 불러온다
+        /// </summary>
+        /// <remarks>
+        /// SaveController와 업적 목록은 씬에 들어올 때 기록을 한 번 읽으므로, 파일만 지우면 화면에는 이전 기록이 남는다.
+        /// 씬을 다시 불러 모두 새 기록으로 만든다
+        /// </remarks>
+        private void ResetSave()
+        {
+            SaveFile.Delete();
+            SceneChange.ChangeScene(SceneManager.GetActiveScene().name);
         }
 
         #endregion

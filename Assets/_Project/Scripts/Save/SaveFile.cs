@@ -71,6 +71,25 @@ namespace FMV
             File.WriteAllText(FilePath, json);
         }
 
+        /// <summary>
+        /// save.json을 지운다
+        /// </summary>
+        /// <remarks>
+        /// 파일만 지우므로, 이미 불러 둔 SaveController의 기록은 그대로 남는다. 지운 뒤에는 씬을 다시 불러 새 기록으로 시작한다.
+        /// 씬을 떠날 때 저장하는 GameController가 있는 플레이 씬에서 지우면 다시 저장되므로, 저장하지 않는 타이틀 씬에서 부른다
+        /// </remarks>
+        /// <returns> 파일이 있어서 지웠으면 true, 원래 없었으면 false </returns>
+        public static bool Delete()
+        {
+            if (!File.Exists(FilePath))
+            {
+                return false;
+            }
+
+            File.Delete(FilePath);
+            return true;
+        }
+
         #endregion
     }
 }

@@ -1,4 +1,3 @@
-using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,13 +22,12 @@ namespace FMV
                 return;
             }
 
-            if (!File.Exists(SaveFile.FilePath))
+            if (!SaveFile.Delete())
             {
                 Debug.Log("Save file not found");
                 return;
             }
 
-            File.Delete(SaveFile.FilePath);
             Debug.Log($"Save file deleted: {SaveFile.FilePath}");
         }
 
