@@ -213,6 +213,7 @@ MonoBehaviour:
   hoverScale: 1.05
   hoverSpeed: 6
   cardSound: {fileID: 2847561930487215362}
+  hoverClip: {fileID: 8300000, guid: e92427ee360075d47b2c7c578ab3d419, type: 3}
   clickClip: {fileID: 8300000, guid: e2710dce7a29ef54aae958638fd64860, type: 3}
   lockedClip: {fileID: 8300000, guid: 7b741f63888d0794eab5698eff069ee6, type: 3}
 --- !u!1 &5052913077988165836

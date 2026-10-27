@@ -277,6 +277,7 @@ MonoBehaviour:
   unityButton: {fileID: 8211082995638344905}
   ChangeSceneString: 
   uiSound: {fileID: 7429861530174382916}
+  hoverClip: {fileID: 8300000, guid: 7bcfcb0cf8679ab43beb212592ea9cd3, type: 3}
 --- !u!82 &3816264013907515731
 AudioSource:
   m_ObjectHideFlags: 0

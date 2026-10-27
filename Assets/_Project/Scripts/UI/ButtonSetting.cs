@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -30,7 +31,7 @@ namespace FMV
     /// GameButton 프리팹 하나로 여러 메뉴 버튼을 만들기 위해, 기능을 Inspector의 ButtonType으로 고른다
     /// </remarks>
     [RequireComponent(typeof(Button))]
-    public class ButtonSetting : MonoBehaviour
+    public class ButtonSetting : MonoBehaviour, IPointerEnterHandler
     {
         #region Serialized Fields
 
@@ -38,8 +39,9 @@ namespace FMV
         [SerializeField] private string targetSceneName;
         [SerializeField] private ButtonVisual buttonVisual;
 
-        // 비워 두면 클릭 소리를 내지 않는다. 영상 위 미디어 버튼처럼 소리가 없어야 하는 버튼은 비운다
+        // 비워 두면 클릭·호버 소리를 내지 않는다. 영상 위 미디어 버튼처럼 소리가 없어야 하는 버튼은 비운다
         [SerializeField] private UISound uiSound;
+        [SerializeField] private AudioClip hoverClip;
 
         #endregion
 
@@ -97,6 +99,26 @@ namespace FMV
                 unityButton.onClick.RemoveListener(onClickAction);
                 isListenerAdded = false;
             }
+        }
+
+        #endregion
+
+        #region Hover
+
+        /// <summary>
+        /// 마우스가 올라오면 호버 소리를 낸다
+        /// </summary>
+        /// <remarks>
+        /// ButtonVisual로 숨긴 버튼은 레이캐스트를 끄므로 이벤트가 오지 않지만, interactable만 끈 버튼에서도 소리가 나지 않게 한 번 더 거른다
+        /// </remarks>
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (uiSound == null || !unityButton.interactable)
+            {
+                return;
+            }
+
+            uiSound.Play(hoverClip);
         }
 
         #endregion

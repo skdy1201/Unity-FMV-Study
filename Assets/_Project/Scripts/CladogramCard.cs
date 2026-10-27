@@ -40,6 +40,7 @@ namespace FMV
 
         [Header("Sound")]
         [SerializeField] private UISound cardSound;
+        [SerializeField] private AudioClip hoverClip;
         [SerializeField] private AudioClip clickClip;
         [SerializeField] private AudioClip lockedClip;
 
@@ -172,6 +173,8 @@ namespace FMV
             {
                 return;
             }
+
+            cardSound.Play(hoverClip);
 
             StopHover();
             hoverRoutine = StartCoroutine(HoverPulse());
