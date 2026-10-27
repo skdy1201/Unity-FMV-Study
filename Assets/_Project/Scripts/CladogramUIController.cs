@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -41,6 +42,10 @@ namespace FMV
         [SerializeField] private float minZoom = 0.5f;
         [SerializeField] private float maxZoom = 1.5f;
 
+        [Header("Button")]
+        [Tooltip("카드 영역 밖(Canvas 바로 아래)에 두어 드래그·확대에 따라 움직이지 않게 한다")]
+        [SerializeField] private ButtonSetting backButton;
+
         #endregion
 
         #region Private Fields
@@ -77,6 +82,28 @@ namespace FMV
         public void Hide()
         {
             SetGroupVisible(false);
+        }
+
+        #endregion
+
+        #region Button
+
+        /// <summary>
+        /// 뒤로 가기 버튼에 클릭 기능을 연결한다
+        /// </summary>
+        /// <remarks>
+        /// 버튼은 프리팹 안에 있어 바깥 컨트롤러가 직접 참조할 수 없으므로, 어디로 갈지는 부른 쪽이 넘긴다
+        /// </remarks>
+        /// <param name="action"> 클릭 시 호출할 기능 </param>
+        public void BindBack(UnityAction action)
+        {
+            if (backButton.ButtonType != ButtonType.Back)
+            {
+                Debug.LogError($"Not Match {ButtonType.Back} Button Type: {backButton.name}");
+                return;
+            }
+
+            backButton.Bind(action);
         }
 
         #endregion
