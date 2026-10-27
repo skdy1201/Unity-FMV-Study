@@ -72,6 +72,11 @@ namespace FMV
             {
                 Debug.LogError("Render Texture empty!");
             }
+            else
+            {
+                // RenderTexture는 에셋이라 지난 실행의 마지막 프레임이 남아 있으므로 비우고 시작한다
+                ClearScreen();
+            }
 
             if (screenGroup == null)
             {
@@ -106,13 +111,14 @@ namespace FMV
         }
 
         /// <summary>
-        /// 영상 화면을 숨기고 입력을 막는다. 현재 플레이어는 Stop으로 처음으로 되돌린다
+        /// 영상 화면을 숨기고 입력을 막는다. 현재 플레이어는 Stop으로 처음으로 되돌리고 화면을 비운다
         /// </summary>
         /// <remarks>
         /// 숨기는 건 분기도로 나갈 때라, 같은 분기를 다시 고르면 처음부터 재생되어야 한다.
         /// PlayClip은 같은 슬롯이면 Stop 없이 Play만 하므로, 일시정지로 두면 멈춘 시점부터 이어진다.
         /// 재생 버튼으로 일시정지해 둔 영상도 되돌려야 하므로 재생 중인지와 상관없이 Stop한다.
         /// Stop은 준비 상태도 해제하므로 같은 클립을 다시 재생하면 Prepare부터 한다.
+        /// 그 사이 나가기 직전 장면이 보이지 않도록 RenderTexture를 비운다.
         /// 구간 반복·Action 대기는 다음 PlayClip이 해제한다
         /// </remarks>
         public void Hide()
@@ -120,6 +126,7 @@ namespace FMV
             SetGroupVisible(false);
 
             videoPlayers[playIndex].Stop();
+            ClearScreen();
         }
 
         #endregion
@@ -377,6 +384,20 @@ namespace FMV
             screenGroup.alpha = visible ? 1f : 0f;
             screenGroup.interactable = visible;
             screenGroup.blocksRaycasts = visible;
+        }
+
+        /// <remarks>
+        /// RenderTexture는 다시 그려지기 전까지 마지막 프레임을 유지하므로, 남은 장면을 검은색으로 지운다.
+        /// 분기 사이 전환에서는 이전 프레임이 틈을 메우므로 부르지 않는다
+        /// </remarks>
+        private void ClearScreen()
+        {
+            // active는 지금 GPU가 그리는 대상이고, GL.Clear는 이 대상을 지운다.
+            // 다른 렌더링에 영향을 주지 않도록 원래 대상을 previous에 담아 두었다가 지운 뒤 되돌린다
+            RenderTexture previous = RenderTexture.active;
+            RenderTexture.active = renderTexture;
+            GL.Clear(true, true, Color.black);
+            RenderTexture.active = previous;
         }
 
         #endregion
