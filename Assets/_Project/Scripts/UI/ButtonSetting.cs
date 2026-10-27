@@ -38,6 +38,9 @@ namespace FMV
         [SerializeField] private string targetSceneName;
         [SerializeField] private ButtonVisual buttonVisual;
 
+        // 비워 두면 클릭 소리를 내지 않는다. 영상 위 미디어 버튼처럼 소리가 없어야 하는 버튼은 비운다
+        [SerializeField] private UISound uiSound;
+
         #endregion
 
         #region Private Fields
@@ -69,6 +72,12 @@ namespace FMV
             if (buttonVisual != null)
             {
                 unityButton.onClick.AddListener(buttonVisual.ChangeImage);
+            }
+
+            // OnEnable에서 등록하는 클릭 기능보다 먼저 등록해, 씬 전환 같은 기능보다 소리가 먼저 시작되게 한다
+            if (uiSound != null)
+            {
+                unityButton.onClick.AddListener(uiSound.Play);
             }
         }
 
