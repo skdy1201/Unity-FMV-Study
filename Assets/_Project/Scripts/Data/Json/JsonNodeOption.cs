@@ -15,7 +15,6 @@ namespace FMV
 
         [SerializeField] private NodeResult result;
         [SerializeField] private string label;
-        // TODO: QTE(id 3)의 anchor는 임의 값이다. 화면에 직접 배치해 보면서 위치를 정한다
         [SerializeField] private Vector2 anchor;
 
         #endregion

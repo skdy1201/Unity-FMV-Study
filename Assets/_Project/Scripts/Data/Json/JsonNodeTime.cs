@@ -13,8 +13,6 @@ namespace FMV
     {
         #region Serialized Fields
 
-        // TODO: QTE(id 3)의 actionStart·timeLimit은 임의 값이다. 영상을 보면서 실제 구간으로 맞춘다
-        // TODO: QTE는 슬로모션으로 처리한다. (클립 길이 - actionStart) / speed가 timeLimit보다 길도록 값을 맞춘다
         [SerializeField] private float actionStart;
         [SerializeField] private float loopStart;
         [SerializeField] private float loopEnd;
